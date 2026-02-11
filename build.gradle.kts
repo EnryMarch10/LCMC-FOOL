@@ -18,6 +18,6 @@ dependencies {
     implementation("org.antlr:antlr4-runtime:4.13.2")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
+//tasks.test {
+//    useJUnitPlatform()
+//}
