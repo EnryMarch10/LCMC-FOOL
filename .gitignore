@@ -1,6 +1,9 @@
 ## Project ##
 tmp/
 
+# FOOL compiler temporary files
+*.asm
+
 #### Automation Tools ####
 
 ### Gradle ###
