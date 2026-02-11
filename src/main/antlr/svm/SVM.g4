@@ -1,8 +1,14 @@
 grammar SVM;
 
-@parser::header {
+@header {
+package svm;
+
 import java.util.*;
 }
+
+//@parser::header { PREV
+//import java.util.*;
+//}
 
 @lexer::members {
 public int lexicalErrors = 0;

@@ -1,5 +1,9 @@
 grammar FOOL;
 
+@header {
+package compiler;
+}
+
 @lexer::members {
 public int lexicalErrors = 0;
 }

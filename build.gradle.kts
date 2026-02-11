@@ -1,5 +1,7 @@
 plugins {
     java
+    antlr
+    application
 }
 
 group = "org.example"
@@ -15,9 +17,18 @@ dependencies {
 //    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // Project specific
+    antlr("org.antlr:antlr4:4.13.2")
     implementation("org.antlr:antlr4-runtime:4.13.2")
+}
+
+tasks.generateGrammarSource {
+    arguments = arguments + listOf("-visitor")
 }
 
 //tasks.test {
 //    useJUnitPlatform()
 //}
+
+application {
+    mainClass.set("compiler.Test")
+}

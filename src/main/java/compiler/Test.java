@@ -10,6 +10,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import svm.ExecuteVM;
+import svm.SVMLexer;
+import svm.SVMParser;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
