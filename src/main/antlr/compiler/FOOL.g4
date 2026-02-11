@@ -2,7 +2,7 @@ grammar FOOL;
 
 @header {
 package compiler;
-}
+}   // ADDED FOR GRADLE
 
 @lexer::members {
 public int lexicalErrors = 0;

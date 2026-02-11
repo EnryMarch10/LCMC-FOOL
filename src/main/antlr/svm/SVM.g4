@@ -4,7 +4,7 @@ grammar SVM;
 package svm;
 
 import java.util.*;
-}
+}   // ADDED FOR GRADLE
 
 //@parser::header { PREV
 //import java.util.*;
