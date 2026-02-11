@@ -22,7 +22,8 @@ dependencies {
 }
 
 tasks.generateGrammarSource {
-    arguments = arguments + listOf("-visitor")
+    maxHeapSize = "64m"
+    arguments = arguments + listOf("-visitor", "-long-messages")
 }
 
 //tasks.test {
