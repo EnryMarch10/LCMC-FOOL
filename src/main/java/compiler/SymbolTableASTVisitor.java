@@ -11,9 +11,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class that represents a visitor of an Abstract Syntax Tree and transforms it into an Enriched Abstract Syntax Tree
+ * (AST -> EAST), where at some node of the AST is attached a Symbol Table Entry.
+ * Performs the first step of the Checker (3-rd component of the Compiler).
+ *
+ * <p>During this process, the Symbol Table is used to:
+ * <ul>
+ *   <li>Detect multiple declarations of the same identifier within the same scope.</li>
+ *   <li>Resolve identifier usages according to the "most closely nested" scope rule.</li>
+ * </ul>
+ *
+ * <p>Each identifier node ({@link VarNode}, {@link FunNode}, and {@link ParNode})
+ * in the AST is linked to its corresponding {@link STentry}.
+ */
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     int stErrors = 0;
-    private List<Map<String, STentry>> symTable = new ArrayList<>();
+    private final List<Map<String, STentry>> symTable = new ArrayList<>();
     private int nestingLevel = 0; // current nesting level
     private int decOffset = -2; // counter for offset of local declarations at current nesting level
 
@@ -37,7 +51,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         symTable.add(hm);
         for (Node dec : n.declist) visit(dec);
         visit(n.exp);
-        symTable.remove(0);
+        symTable.removeFirst();
         return null;
     }
 
@@ -55,12 +69,12 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         List<TypeNode> parTypes = new ArrayList<>();
         for (ParNode par : n.parlist) parTypes.add(par.getType());
         STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), decOffset--);
-        //inserimento di ID nella symtable
+        // Putting ID into the SymTable
         if (hm.put(n.id, entry) != null) {
             System.out.println("Fun id " + n.id + " at line " + n.getLine() + " already declared");
             stErrors++;
         }
-        //creare una nuova hashmap per la symTable
+        // Creation of a new hashmap for the SymTable
         nestingLevel++;
         Map<String, STentry> hmn = new HashMap<>();
         symTable.add(hmn);
@@ -75,7 +89,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             }
         for (Node dec : n.declist) visit(dec);
         visit(n.exp);
-        //rimuovere la hashmap corrente poiche' esco dallo scope
+        // removing current hashmap because exiting scope
         symTable.remove(nestingLevel--);
         decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
         return null;

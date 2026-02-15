@@ -6,8 +6,13 @@ import compiler.exc.UnimplException;
 
 import static compiler.lib.FOOLlib.extractNodeName;
 
+/**
+ * Class that implements a visitor item (of the Visitor Patter) for an Abstract Syntax Tree (AST).
+ * @param <S> Visitor return type.
+ * @param <E> Exception type.
+ */
 public class BaseASTVisitor<S, E extends Exception> {
-    protected boolean print;    // enables printing
+    protected boolean print; // enables printing
     protected String indent;
     private boolean incomplExc; // enables throwing IncomplException
 
@@ -31,23 +36,23 @@ public class BaseASTVisitor<S, E extends Exception> {
     }
 
     public S visit(Visitable v) throws E {
-        return visit(v, "");                //performs unmarked visit
+        return visit(v, ""); // performs unmarked visit
     }
 
-    public S visit(Visitable v, String mark) throws E {   //when printing marks this visit with string mark
-        if (v == null)
+    public S visit(Visitable v, String mark) throws E { // when printing marks this visit with string mark
+        if (v == null) {
             if (incomplExc) {
                 throw new IncomplException();
             } else {
                 return null;
             }
+        }
         if (print) {
             String temp = indent;
             indent = (indent == null) ? "" : indent + "  ";
             indent += mark; //inserts mark
             try {
-                S result = visitByAcc(v);
-                return result;
+                return visitByAcc(v);
             } finally {
                 indent = temp;
             }

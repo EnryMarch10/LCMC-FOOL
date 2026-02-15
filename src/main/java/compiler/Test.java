@@ -33,7 +33,7 @@ public class Test {
         System.out.println("Generating AST.");
         ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
         Node ast = visitor.visit(st);
-        System.out.println("");
+        System.out.println();
 
         System.out.println("Enriching AST via symbol table.");
         SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
@@ -42,7 +42,7 @@ public class Test {
 
         System.out.println("Visualizing Enriched AST.");
         new PrintEASTVisitor().visit(ast);
-        System.out.println("");
+        System.out.println();
 
         System.out.println("Checking Types.");
         try {
@@ -67,7 +67,7 @@ public class Test {
         BufferedWriter out = new BufferedWriter(new FileWriter(fileName + ".asm"));
         out.write(code);
         out.close();
-        System.out.println("");
+        System.out.println();
 
         System.out.println("Assembling generated code.");
         CharStream charsASM = CharStreams.fromFileName(fileName + ".asm");

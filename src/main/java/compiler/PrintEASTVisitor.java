@@ -5,6 +5,9 @@ import compiler.exc.VoidException;
 import compiler.lib.BaseEASTVisitor;
 import compiler.lib.Node;
 
+/**
+ * Class that visits and prints an Enriched Abstract Syntax Tree (EAST).
+ */
 public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
 
     PrintEASTVisitor() {

@@ -1,30 +1,47 @@
 package compiler.lib;
 
+/**
+ * Class that manages utility methods for the FOOL programming language.
+ */
 public class FOOLlib {
     public static int typeErrors = 0;
     private static int labCount = 0;
     private static int funlabCount = 0;
     private static String funCode = null;
 
+    /**
+     * Extracts name from {@code Node} class.
+     * @param s is in the form {@code compiler.AST$NameNode}.
+     * @return Extracts {@code Name} from {@code compiler.AST$NameNode}.
+     */
     public static String extractNodeName(String s) { // s is in the form compiler.AST$NameNode
         return s.substring(s.lastIndexOf('$') + 1, s.length() - 4);
     }
 
+    /**
+     * Extracts name from {@code Context} class.
+     * @param s is in the form {@code compiler.FOOLParser$NameContext}.
+     * @return Extracts {@code Name} from {@code compiler.FOOLParser$NameContext}.
+     */
     public static String extractCtxName(String s) { // s is in the form compiler.FOOLParser$NameContext
         return s.substring(s.lastIndexOf('$') + 1, s.length() - 7);
     }
 
     public static String lowerizeFirstChar(String s) {
-        return Character.toLowerCase(s.charAt(0)) + s.substring(1, s.length());
+        return Character.toLowerCase(s.charAt(0)) + s.substring(1);
     }
 
-    // crea un'unica stringa a partire da un insieme di stringhe concatenadole e
-    // introducendo, all'interno, dei newline "\n" come separatore tra le stringhe
-    public static String nlJoin(String... lines) { //argomenti null ignorati
+    /**
+     * Joins a sequence of strings using newline {@code "\n"} separator.
+     * Ignores {@code null} arguments.
+     * @param lines the sequence of strings.
+     * @return the joined string.
+     */
+    public static String nlJoin(String... lines) {
         String code = null;
-        for (int i = 0; i < lines.length; i++) {
-            if (lines[i] != null) {
-                code = (code == null ? "" : code + "\n") + lines[i];
+        for (String line : lines) {
+            if (line != null) {
+                code = (code == null ? "" : code + "\n") + line;
             }
         }
         return code;
@@ -38,10 +55,18 @@ public class FOOLlib {
         return "function" + (funlabCount++);
     }
 
+    /**
+     * Puts an empty line at the beginning of the function code string.
+     * @param c the function code string.
+     */
     public static void putCode(String c) {
         funCode = nlJoin(funCode, "", c); // linea vuota di separazione prima di codice funzione
     }
 
+    /**
+     * Getter for the function code string.
+     * @return the function code string set with {@link #putCode(String)}.
+     */
     public static String getCode() {
         return funCode;
     }
