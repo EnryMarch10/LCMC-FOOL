@@ -1,8 +1,6 @@
 package compiler.lib;
 
-/**
- * Class that manages utility methods for the FOOL programming language.
- */
+/** Class that manages utility methods for the FOOL programming language. */
 public class FOOLlib {
     public static int typeErrors = 0;
     private static int labCount = 0;
@@ -11,6 +9,7 @@ public class FOOLlib {
 
     /**
      * Extracts name from {@code Node} class.
+     *
      * @param s is in the form {@code compiler.AST$NameNode}.
      * @return Extracts {@code Name} from {@code compiler.AST$NameNode}.
      */
@@ -20,6 +19,7 @@ public class FOOLlib {
 
     /**
      * Extracts name from {@code Context} class.
+     *
      * @param s is in the form {@code compiler.FOOLParser$NameContext}.
      * @return Extracts {@code Name} from {@code compiler.FOOLParser$NameContext}.
      */
@@ -32,8 +32,8 @@ public class FOOLlib {
     }
 
     /**
-     * Joins a sequence of strings using newline {@code "\n"} separator.
-     * Ignores {@code null} arguments.
+     * Joins a sequence of strings using newline {@code "\n"} separator. Ignores {@code null} arguments.
+     *
      * @param lines the sequence of strings.
      * @return the joined string.
      */
@@ -57,14 +57,16 @@ public class FOOLlib {
 
     /**
      * Puts an empty line at the beginning of the function code string.
+     *
      * @param c the function code string.
      */
     public static void putCode(String c) {
-        funCode = nlJoin(funCode, "", c); // linea vuota di separazione prima di codice funzione
+        funCode = nlJoin(funCode, "", c);
     }
 
     /**
      * Getter for the function code string.
+     *
      * @return the function code string set with {@link #putCode(String)}.
      */
     public static String getCode() {

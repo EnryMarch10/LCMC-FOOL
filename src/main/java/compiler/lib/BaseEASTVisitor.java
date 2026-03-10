@@ -5,12 +5,13 @@ import compiler.exc.UnimplException;
 
 /**
  * Class that implements a visitor item (of the Visitor Patter) for an Enriched Abstract Syntax Tree (EAST).
+ *
  * @param <S> Visitor return type.
  * @param <E> Exception type.
  */
 public class BaseEASTVisitor<S, E extends Exception> extends BaseASTVisitor<S, E> {
 
-    protected BaseEASTVisitor() { }
+    protected BaseEASTVisitor() {}
 
     protected BaseEASTVisitor(boolean ie) {
         super(ie);

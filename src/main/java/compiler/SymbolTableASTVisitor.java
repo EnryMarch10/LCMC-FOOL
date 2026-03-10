@@ -5,7 +5,6 @@ import compiler.exc.VoidException;
 import compiler.lib.BaseASTVisitor;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,16 +13,18 @@ import java.util.Map;
 /**
  * Class that represents a visitor of an Abstract Syntax Tree and transforms it into an Enriched Abstract Syntax Tree
  * (AST -> EAST), where at some node of the AST is attached a Symbol Table Entry.
- * Performs the first step of the Checker (3-rd component of the Compiler).
+ *
+ * <p>Performs the first step of the Checker (3-rd component of the Compiler).
  *
  * <p>During this process, the Symbol Table is used to:
+ *
  * <ul>
- *   <li>Detect multiple declarations of the same identifier within the same scope.</li>
- *   <li>Resolve identifier usages according to the "most closely nested" scope rule.</li>
+ *   <li>Detect multiple declarations of the same identifier within the same scope.
+ *   <li>Resolve identifier usages according to the "most closely nested" scope rule.
  * </ul>
  *
- * <p>Each identifier node ({@link VarNode}, {@link FunNode}, and {@link ParNode})
- * in the AST is linked to its corresponding {@link STentry}.
+ * <p>Each identifier node ({@link VarNode}, {@link FunNode}, and {@link ParNode}) in the AST is linked to its
+ * corresponding {@link STentry}.
  */
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     int stErrors = 0;
@@ -31,7 +32,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     private int nestingLevel = 0; // current nesting level
     private int decOffset = -2; // counter for offset of local declarations at current nesting level
 
-    SymbolTableASTVisitor() { }
+    SymbolTableASTVisitor() {}
 
     SymbolTableASTVisitor(boolean debug) {
         super(debug);
@@ -91,7 +92,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         visit(n.exp);
         // removing current hashmap because exiting scope
         symTable.remove(nestingLevel--);
-        decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
+        decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting
+        // level
         return null;
     }
 
@@ -101,7 +103,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         visit(n.exp);
         Map<String, STentry> hm = symTable.get(nestingLevel);
         STentry entry = new STentry(nestingLevel, n.getType(), decOffset--);
-        //inserimento di ID nella symtable
+        // inserimento di ID nella symtable
         if (hm.put(n.id, entry) != null) {
             System.out.println("Var id " + n.id + " at line " + n.getLine() + " already declared");
             stErrors++;

@@ -1,8 +1,6 @@
 package svm;
 
-/**
- * Class that executes a Stack Virtual Machine (SVM) from the "stack machine instructions" produced by the Compiler.
- */
+/** Class that executes a Stack Virtual Machine (SVM) from the "stack machine instructions" produced by the Compiler. */
 public class ExecuteVM {
     public static final int CODESIZE = 10_000;
     public static final int MEMSIZE = 10_000;

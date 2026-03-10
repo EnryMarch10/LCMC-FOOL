@@ -1,13 +1,14 @@
 package compiler.lib;
 
+import static compiler.lib.FOOLlib.extractNodeName;
+
 import compiler.AST.*;
 import compiler.exc.IncomplException;
 import compiler.exc.UnimplException;
 
-import static compiler.lib.FOOLlib.extractNodeName;
-
 /**
  * Class that implements a visitor item (of the Visitor Patter) for an Abstract Syntax Tree (AST).
+ *
  * @param <S> Visitor return type.
  * @param <E> Exception type.
  */
@@ -16,7 +17,7 @@ public class BaseASTVisitor<S, E extends Exception> {
     protected String indent;
     private boolean incomplExc; // enables throwing IncomplException
 
-    protected BaseASTVisitor() { }
+    protected BaseASTVisitor() {}
 
     protected BaseASTVisitor(boolean ie) {
         incomplExc = ie;
@@ -50,7 +51,7 @@ public class BaseASTVisitor<S, E extends Exception> {
         if (print) {
             String temp = indent;
             indent = (indent == null) ? "" : indent + "  ";
-            indent += mark; //inserts mark
+            indent += mark; // inserts mark
             try {
                 return visitByAcc(v);
             } finally {
@@ -135,24 +136,24 @@ public class BaseASTVisitor<S, E extends Exception> {
 
     // OPERATOR EXTENSION
 
-//    public S visitNode(GreaterEqualNode n) throws E {throw new UnimplException();}
-//    public S visitNode(LessEqualNode n) throws E {throw new UnimplException();}
-//    public S visitNode(NotNode n) throws E {throw new UnimplException();}
-//    public S visitNode(MinusNode n) throws E {throw new UnimplException();}
-//    public S visitNode(OrNode n) throws E {throw new UnimplException();}
-//    public S visitNode(DivNode n) throws E {throw new UnimplException();}
-//    public S visitNode(AndNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(GreaterEqualNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(LessEqualNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(NotNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(MinusNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(OrNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(DivNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(AndNode n) throws E {throw new UnimplException();}
 
     // OBJECT-ORIENTED EXTENSION
 
-//    public S visitNode(ClassNode n) throws E {throw new UnimplException();}
-//    public S visitNode(FieldNode node) throws E {throw new UnimplException();}
-//    public S visitNode(MethodNode n) throws E {throw new UnimplException();}
-//    public S visitNode(ClassCallNode node) throws E {throw new UnimplException();}
-//    public S visitNode(NewNode n) throws E {throw new UnimplException();}
-//    public S visitNode(EmptyNode n) throws E {throw new UnimplException();}
-//
-//    public S visitNode(ClassTypeNode n) throws E {throw new UnimplException();}
-//    public S visitNode(RefTypeNode n) throws E {throw new UnimplException();}
-//    public S visitNode(EmptyTypeNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(ClassNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(FieldNode node) throws E {throw new UnimplException();}
+    //    public S visitNode(MethodNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(ClassCallNode node) throws E {throw new UnimplException();}
+    //    public S visitNode(NewNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(EmptyNode n) throws E {throw new UnimplException();}
+    //
+    //    public S visitNode(ClassTypeNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(RefTypeNode n) throws E {throw new UnimplException();}
+    //    public S visitNode(EmptyTypeNode n) throws E {throw new UnimplException();}
 }

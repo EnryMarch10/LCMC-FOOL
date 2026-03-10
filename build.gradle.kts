@@ -1,11 +1,12 @@
 plugins {
     java
-    antlr
     application
+    id("com.diffplug.spotless") version "8.3.0"
+    antlr
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = "compiler"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -35,6 +36,25 @@ tasks.generateGrammarSource {
 
 application {
     mainClass.set("compiler.Test")
+}
+
+spotless {
+    java {
+        // Exclude generated code
+        targetExclude("build/**")
+
+        // Palantir Java Format - A modern, lambda-friendly, 120 character Java formatter.
+        palantirJavaFormat().formatJavadoc(true)
+
+        // Import management
+        removeUnusedImports()
+        importOrder()
+
+        // Whitespace rules
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 //tasks.test {

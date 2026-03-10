@@ -7,12 +7,13 @@ import compiler.lib.TypeNode;
 /**
  * Class that verifies relationships between types of the FOOL programming language.
  *
- * <p>Type relationships are necessary to apply the <b>Liskov substitution principle</b> (subtypes can be used
- * in place of supertypes) and to verify the <b>soundness</b> of the Type Checking System.</p>
+ * <p>Type relationships are necessary to apply the <b>Liskov substitution principle</b> (subtypes can be used in place
+ * of supertypes) and to verify the <b>soundness</b> of the Type Checking System.
  */
 public class TypeRels {
     /**
      * Evaluates if {@code a} is subtype of {@code b}.
+     *
      * @param a First base type ({@link IntTypeNode} or {@link BoolTypeNode}).
      * @param b Second base type ({@link IntTypeNode} or {@link BoolTypeNode}).
      * @return If {@code a} is subtype of {@code b}.
