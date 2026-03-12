@@ -8,11 +8,11 @@ import compiler.lib.BaseASTVisitor;
 import compiler.lib.Node;
 
 /**
- * Class that represents a code generator for a MIPS (Microprocessor without Interlocked Pipeline Stages) processor,
- * which is based on a RISC architecture.
+ * Class responsible for generating code for a Stack Virtual Machine (SVM). It targets the MIPS ISA (Microprocessor
+ * without Interlocked Pipeline Stages Instruction Set Architecture), a RISC architecture.
  *
- * <p>Performs the code generation of assembly instructions (called "stack machine instructions"), acting as the Code
- * Generator (4-th and last component of the Compiler).
+ * <p>Performs the code generation phase of the compiler, translating stack‑machine instructions into MIPS assembly.
+ * This class acts as the Code Generator (4-th and last component of the Compiler).
  */
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 

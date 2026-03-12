@@ -83,11 +83,12 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         decOffset = -2;
 
         int parOffset = 1;
-        for (ParNode par : n.parlist)
+        for (ParNode par : n.parlist) {
             if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
                 System.out.println("Par id " + par.id + " at line " + n.getLine() + " already declared");
                 stErrors++;
             }
+        }
         for (Node dec : n.declist) visit(dec);
         visit(n.exp);
         // removing current hashmap because exiting scope
