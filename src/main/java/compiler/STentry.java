@@ -5,6 +5,7 @@ import compiler.lib.BaseEASTVisitor;
 import compiler.lib.TypeNode;
 import compiler.lib.Visitable;
 
+/** Class that represents a Symbol Table Entry, used to Enrich the Abstract Syntax Tree. */
 public class STentry implements Visitable {
     final int nl;
     final TypeNode type;

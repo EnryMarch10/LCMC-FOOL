@@ -1,11 +1,12 @@
 package svm;
 
+/** Class that executes a Stack Virtual Machine (SVM) from the "stack machine instructions" produced by the Compiler. */
 public class ExecuteVM {
-    public static final int CODESIZE = 10000;
-    public static final int MEMSIZE = 10000;
+    public static final int CODESIZE = 10_000;
+    public static final int MEMSIZE = 10_000;
 
-    private int[] code;
-    private int[] memory = new int[MEMSIZE];
+    private final int[] code;
+    private final int[] memory = new int[MEMSIZE];
 
     private int ip = 0;
     private int sp = MEMSIZE;

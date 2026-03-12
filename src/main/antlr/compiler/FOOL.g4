@@ -1,4 +1,6 @@
-grammar FOOL;
+grammar FOOL; // Functional Object Oriented Language
+
+// Perform the tasks of the Lexer and the Parser (1-st and 2-nd components of the Compiler)
 
 @header {
 package compiler;
@@ -9,14 +11,14 @@ public int lexicalErrors = 0;
 }
 
 /*------------------------------------------------------------------
- * PARSER RULES
+ * PARSER RULES, with EBNF (Extended Backus-Naur Form) grammars
  *------------------------------------------------------------------*/
 
 prog: progbody EOF;
 
-progbody:   LET dec+ IN exp SEMIC #letInProg
-          | exp SEMIC             #noDecProg
-          ;
+progbody:  LET dec+ IN exp SEMIC #letInProg
+         | exp SEMIC #noDecProg
+         ;
 
 //progbody:   LET (cldec+ dec* | dec+) IN exp SEMIC #letInProg
 //          | exp SEMIC                               #noDecProg
@@ -33,25 +35,25 @@ progbody:   LET dec+ IN exp SEMIC #letInProg
 //                  (LET dec+ IN)? exp
 //             SEMIC;
 
-dec:   VAR ID COLON type ASS exp SEMIC #vardec
-     | FUN ID COLON type
-           LPAR (ID COLON type (COMMA ID COLON type)*)? RPAR
-                (LET dec+ IN)? exp
-           SEMIC #fundec
-     ;
+dec:  VAR ID COLON type ASS exp SEMIC #vardec
+    | FUN ID COLON type
+          LPAR (ID COLON type (COMMA ID COLON type)*)? RPAR
+               (LET dec+ IN)? exp
+          SEMIC #fundec
+    ;
 
-exp:   exp TIMES exp #times
-     | exp PLUS exp #plus
-     | exp EQ exp #eq
-     | LPAR exp RPAR #pars
-     | MINUS? NUM #integer
-     | TRUE #true
-     | FALSE #false
-     | IF exp THEN CLPAR exp CRPAR ELSE CLPAR exp CRPAR #if
-     | PRINT LPAR exp RPAR #print
-     | ID #id
-     | ID LPAR (exp (COMMA exp)*)? RPAR #call
-     ;
+exp:  exp TIMES exp #times
+    | exp PLUS exp #plus
+    | exp EQ exp #eq
+    | LPAR exp RPAR #pars
+    | MINUS? NUM #integer
+    | TRUE #true
+    | FALSE #false
+    | IF exp THEN CLPAR exp CRPAR ELSE CLPAR exp CRPAR #if
+    | PRINT LPAR exp RPAR #print
+    | ID #id
+    | ID LPAR (exp (COMMA exp)*)? RPAR #call
+    ;
 
 //exp:   exp (TIMES | DIV) exp #timesDiv
 //     | exp (PLUS | MINUS) exp #plusMinus
@@ -71,51 +73,51 @@ exp:   exp TIMES exp #times
 //     | ID DOT ID LPAR (exp (COMMA exp)* )? RPAR #dotCall
 //     ;
 
-type:   INT #intType
-      | BOOL #boolType
-//      | ID #idType
- 	  ;
+type:  INT #intType
+     | BOOL #boolType
+//     | ID #idType
+ 	 ;
 
 /*------------------------------------------------------------------
  * LEXER RULES
  *------------------------------------------------------------------*/
 
-PLUS  : '+';
-MINUS : '-';
-TIMES : '*';
-//DIV   : '/';
-LPAR  : '(';
-RPAR  : ')';
-CLPAR : '{';
-CRPAR : '}';
-SEMIC : ';';
-COLON : ':';
-COMMA : ',';
-//DOT	  : '.';
-//OR	  : '||';
-//AND	  : '&&';
-//NOT	  : '!';
-//GE	  : '>=';
-//LE	  : '<=';
-EQ    : '==';
-ASS   : '=';
-TRUE  : 'true';
-FALSE : 'false';
-IF    : 'if';
-THEN  : 'then';
-ELSE  : 'else';
-PRINT : 'print';
-LET   : 'let';
-IN    : 'in';
-VAR   : 'var';
-FUN   : 'fun';
+PLUS    : '+';
+MINUS   : '-';
+TIMES   : '*';
+//DIV     : '/';
+LPAR    : '(';
+RPAR    : ')';
+CLPAR   : '{';
+CRPAR   : '}';
+SEMIC   : ';';
+COLON   : ':';
+COMMA   : ',';
+//DOT     : '.';
+//OR      : '||';
+//AND     : '&&';
+//NOT     : '!';
+//GE      : '>=';
+//LE      : '<=';
+EQ      : '==';
+ASS     : '=';
+TRUE    : 'true';
+FALSE   : 'false';
+IF      : 'if';
+THEN    : 'then';
+ELSE    : 'else';
+PRINT   : 'print';
+LET     : 'let';
+IN      : 'in';
+VAR     : 'var';
+FUN     : 'fun';
 //CLASS   : 'class' ;
 //EXTENDS : 'extends' ;
-//NEW 	: 'new' ;
+//NEW     : 'new' ;
 //NULL    : 'null' ;
-INT   : 'int';
-BOOL  : 'bool';
-NUM   : '0' | ('1'..'9')('0'..'9')*;
+INT     : 'int';
+BOOL    : 'bool';
+NUM     : '0' | ('1'..'9')('0'..'9')*;
 
 ID: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')*;
 

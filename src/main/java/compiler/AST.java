@@ -4,10 +4,15 @@ import compiler.lib.BaseASTVisitor;
 import compiler.lib.DecNode;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
-
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class that represents an Abstract Syntax Tree (AST) for the FOOL programming language, defining its various
+ * <b>node</b> types and their structure.
+ *
+ * <p>Each static nested class represents a node of the AST, ordered from root to leaves.
+ */
 public class AST {
     public static class ProgLetInNode extends Node {
         final List<DecNode> declist;
@@ -52,7 +57,7 @@ public class AST {
             exp = e;
         }
 
-        //void setType(TypeNode t) {type = t;}
+        // void setType(TypeNode t) {type = t;}
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
