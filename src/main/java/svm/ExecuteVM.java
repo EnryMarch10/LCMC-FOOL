@@ -9,16 +9,18 @@ public class ExecuteVM {
     public static final int CODESIZE = 10_000;
     public static final int MEMSIZE = 10_000;
 
+    // Memory layout
     private final int[] code;
-    private final int[] memory = new int[MEMSIZE];
+    private final int[] memory = new int[MEMSIZE]; // stack + heap
 
-    private int ip = 0;
-    private int sp = MEMSIZE;
+    // Registers
+    private int ip = 0; // instruction pointer, could have been set to PC, program counter
+    private int sp = MEMSIZE; // stack pointer
 
-    private int hp = 0;
-    private int fp = MEMSIZE;
-    private int ra;
-    private int tm;
+    private int hp = 0; // heap pointer
+    private int fp = MEMSIZE; // frame pointer
+    private int ra; // return address
+    private int tm; // temporary storage
 
     public ExecuteVM(int[] code) {
         this.code = code;
