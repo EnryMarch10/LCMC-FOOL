@@ -28,7 +28,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String declCode = null;
         for (Node dec : n.declist) declCode = nlJoin(declCode, visit(dec));
         return nlJoin(
-                "push 0",
+                "push 0", // fake return address, could be any value, used for consistency
                 declCode, // generate code for declarations (allocation)
                 visit(n.exp),
                 "halt",
@@ -70,6 +70,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return "push " + funl;
     }
 
+    // Step in creating AR (activation record)
     @Override
     public String visitNode(VarNode n) {
         if (print) printNode(n, n.id);
@@ -79,7 +80,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     @Override
     public String visitNode(PrintNode n) {
         if (print) printNode(n);
-        return nlJoin(visit(n.exp), "print");
+        return nlJoin(visit(n.exp), "print"); // prints top of the stack
     }
 
     @Override
@@ -87,7 +88,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n);
         String l1 = freshLabel();
         String l2 = freshLabel();
-        return nlJoin(visit(n.cond), "push 1", "beq " + l1, visit(n.el), "b " + l2, l1 + ":", visit(n.th), l2 + ":");
+        return nlJoin(
+                visit(n.cond),
+                "push 1", // push true to check if cond is true
+                "beq " + l1, // checks if cond is true
+                visit(n.el),
+                "b " + l2,
+                l1 + ":",
+                visit(n.th),
+                l2 + ":");
     }
 
     @Override
@@ -95,7 +104,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n);
         String l1 = freshLabel();
         String l2 = freshLabel();
-        return nlJoin(visit(n.left), visit(n.right), "beq " + l1, "push 0", "b " + l2, l1 + ":", "push 1", l2 + ":");
+        return nlJoin(
+                visit(n.left),
+                visit(n.right),
+                "beq " + l1, // checks if left equals right
+                "push 0", // return false
+                "b " + l2,
+                l1 + ":",
+                "push 1", // return true
+                l2 + ":");
     }
 
     @Override

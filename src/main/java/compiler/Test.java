@@ -16,8 +16,8 @@ import svm.SVMLexer;
 import svm.SVMParser;
 
 public class Test {
-    public static void main(String[] args) throws Exception {
-        String fileName = "sample_programs/prova.fool";
+    static void main(String[] args) throws Exception {
+        String fileName = "sample_programs/prova2.fool";
 
         CharStream chars = CharStreams.fromFileName(fileName);
         FOOLLexer lexer = new FOOLLexer(chars);
