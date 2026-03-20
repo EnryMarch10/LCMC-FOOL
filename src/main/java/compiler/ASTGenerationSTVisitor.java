@@ -122,6 +122,21 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitAndOr(AndOrContext c) {
+        if (print) printVarAndProdName(c);
+        Node n;
+        if (c.AND() != null) {
+            throw new UnimplException();
+        } else if (c.OR() != null) {
+            n = new OrNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.OR().getSymbol().getLine());
+        } else {
+            throw new IllegalStateException("Every type of operator is null.");
+        }
+        return n;
+    }
+
+    @Override
     public Node visitVardec(VardecContext c) {
         if (print) printVarAndProdName(c);
         Node n = null;

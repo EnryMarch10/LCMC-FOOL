@@ -1,0 +1,5 @@
+//let
+  //var x:int = 2 * 4;
+  //var y:int = 27 / 3;
+//in
+  print(if (true || (2 == 1)) then { true } else { false });
