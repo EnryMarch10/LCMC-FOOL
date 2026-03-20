@@ -17,7 +17,11 @@ import svm.SVMParser;
 
 public class Test {
     static void main(String[] args) throws Exception {
-        String fileName = "sample_programs/prova2.fool";
+        if (args.length == 0) {
+            System.err.println("ERROR: Fool program directory must be passed as input");
+            System.exit(1);
+        }
+        String fileName = "sample_programs/" + args[0];
 
         CharStream chars = CharStreams.fromFileName(fileName);
         FOOLLexer lexer = new FOOLLexer(chars);

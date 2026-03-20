@@ -1,4 +1,4 @@
-let 
+let
   var x:int = 1+5;
   var b:bool = true;
 in
