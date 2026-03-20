@@ -1,0 +1,1 @@
+print(if (10 <= 9) then { true } else { false });
