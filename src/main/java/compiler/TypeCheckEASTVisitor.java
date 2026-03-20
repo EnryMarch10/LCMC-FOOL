@@ -136,6 +136,19 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     }
 
     @Override
+    public TypeNode visitNode(DivNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
+            throw new TypeException("Non integers in division", n.getLine());
+        // TODO: Check correctness of behaviour, and kind of exception threw
+        if (n.right instanceof IntNode rightInt && rightInt.val == 0)
+            throw new TypeException("Invalid division by 0", n.getLine());
+        else if (n.right instanceof BoolNode rightBool && !rightBool.val)
+            throw new TypeException("Invalid division by 0", n.getLine());
+        return new IntTypeNode();
+    }
+
+    @Override
     public TypeNode visitNode(PlusNode n) throws TypeException {
         if (print) printNode(n);
         if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
