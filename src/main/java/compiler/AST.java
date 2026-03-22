@@ -171,9 +171,9 @@ public class AST {
     }
 
     public static class NotNode extends Node {
-        final Boolean val;
+        final Node val;
 
-        NotNode(Boolean n) {
+        NotNode(Node n) {
             val = n;
         }
 

@@ -41,7 +41,11 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     private STentry stLookup(String id) {
         int j = nestingLevel;
         STentry entry = null;
-        while (j >= 0 && entry == null) entry = symTable.get(j--).get(id);
+        if (symTable.size() > j) {
+            while (j >= 0 && entry == null) {
+                entry = symTable.get(j--).get(id);
+            }
+        }
         return entry;
     }
 
@@ -149,6 +153,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         if (print) printNode(n);
         visit(n.left);
         visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(NotNode n) {
+        if (print) printNode(n);
+        visit(n.val);
         return null;
     }
 

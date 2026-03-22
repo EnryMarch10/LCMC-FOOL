@@ -136,7 +136,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n);
         String l1 = freshLabel();
         String l2 = freshLabel();
-        return nlJoin(
+        return nlJoin( // Does SHORT CIRCUIT EVALUATION
                 visit(n.left),
                 "push 1", // push true to check if left cond is true
                 "beq " + l1, // checks if left cond is true
@@ -147,6 +147,22 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "b " + l2,
                 l1 + ":",
                 "push 1", // return true
+                l2 + ":");
+    }
+
+    @Override
+    public String visitNode(NotNode n) {
+        if (print) printNode(n);
+        String l1 = freshLabel();
+        String l2 = freshLabel();
+        return nlJoin(
+                visit(n.val),
+                "push 1", // push true
+                "beq " + l1, // checks if cond is true
+                "push 1", // return true
+                "b " + l2,
+                l1 + ":",
+                "push 0", // return false
                 l2 + ":");
     }
 
