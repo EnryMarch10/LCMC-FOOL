@@ -123,7 +123,21 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (print) printNode(n);
         TypeNode l = visit(n.left);
         TypeNode r = visit(n.right);
+        // TODO: when adding classes, also check that l and r are subtypes of Integer
+        //      (assuming == between objects does not exist)
         if (!(isSubtype(l, r) || isSubtype(r, l))) throw new TypeException("Incompatible types in equal", n.getLine());
+        return new BoolTypeNode();
+    }
+
+    @Override
+    public TypeNode visitNode(GreaterEqualNode n) throws TypeException {
+        if (print) printNode(n);
+        TypeNode l = visit(n.left);
+        TypeNode r = visit(n.right);
+        // TODO: when adding classes, also check that l and r are subtypes of Integer
+        if (!(isSubtype(l, r) || isSubtype(r, l))) {
+            throw new TypeException("Incompatible types in greater equal", n.getLine());
+        }
         return new BoolTypeNode();
     }
 
