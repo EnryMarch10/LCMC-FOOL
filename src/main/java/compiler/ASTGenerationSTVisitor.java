@@ -83,16 +83,16 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitPlusMinus(PlusMinusContext c) {
         if (print) printVarAndProdName(c);
-        Node n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
-        n.setLine(c.PLUS().getSymbol().getLine());
-        // TODO: Check node type with the following statement:
-        //        if (c.PLUS() != null) {
-        //            // Generate plus node
-        //        } else if (c.MINUS() != null) {
-        //            // Generate minus node
-        //        } else {
-        //            throw new IllegalStateException("Every type of operator is null.");
-        //        }
+        Node n;
+        if (c.PLUS() != null) {
+            n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.PLUS().getSymbol().getLine());
+        } else if (c.MINUS() != null) {
+            n = new MinusNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.MINUS().getSymbol().getLine());
+        } else {
+            throw new IllegalStateException("Every type of operator is null.");
+        }
         return n;
     }
 
