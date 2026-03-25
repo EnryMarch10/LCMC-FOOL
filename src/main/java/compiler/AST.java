@@ -170,6 +170,19 @@ public class AST {
         }
     }
 
+    public static class NotNode extends Node {
+        final Node exp;
+
+        NotNode(Node e) {
+            exp = e;
+        }
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return visitor.visitNode(this);
+        }
+    }
+
     public static class TimesNode extends Node {
         final Node left;
         final Node right;

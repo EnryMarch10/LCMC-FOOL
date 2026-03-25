@@ -161,17 +161,29 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         );
     }
 
-    // TODO: (AND operator) apply short-circuit evaluation by returning false (0) immediately
-    //      in case the first operand is false
+    public String visitNode(NotNode n) {
+        if (print) printNode(n);
+        String expressionTrue = freshLabel();
+        String end = freshLabel();
+        return nlJoin(
+            // Evaluates expression
+            visit(n.exp),
+            "push 1",
+            "beq " + expressionTrue, // If the expression is true, jumps and pushes 0 (false)
+            // Else, pushes 1 (true)
+            "push 1",
+            "b " + end,
+            expressionTrue + ":",
+            "push 0",
+            end + ":"
+        );
+    }
 
     @Override
     public String visitNode(TimesNode n) {
         if (print) printNode(n);
         return nlJoin(visit(n.left), visit(n.right), "mult");
     }
-
-    // TODO: For minus node (and other non-commutative operations), it's necessary to preserve
-    //      the order of the operands
 
     @Override
     public String visitNode(PlusNode n) {

@@ -1,0 +1,2 @@
+print(!true) + /* Expected: 0 (false) */
+print(!false); /* Expected: 1 (true) */
