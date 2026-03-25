@@ -1,0 +1,12 @@
+let
+/*
+    fun testAnd:bool (left:bool, right:bool)
+        print(left && right);*/
+    fun notEvaluated:bool(x:bool)
+        print(x);
+in
+    print(true && true) + /* Expected: 1 (true) */
+    print(true && false) + /* Expected: 0 (false) */
+    print(false && false) + /* Expected: 0 (false) */
+    print((false && notEvaluated(true))); /* Expected: 0 (false). Should not print "1" before the "0", because of
+                                           short-circuit evaluation.*/

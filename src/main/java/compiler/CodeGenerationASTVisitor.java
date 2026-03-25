@@ -132,6 +132,35 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
             l2 + ":");
     }
 
+    @Override
+    public String visitNode(AndNode n) {
+        if (print) printNode(n);
+        String end = freshLabel();
+        String leftTrue = freshLabel();
+        String rightTrue = freshLabel();
+        return nlJoin(
+            // Evaluates the left operand
+            visit(n.left),
+            "push 1",
+            "beq " + leftTrue, // If it's true, jumps to the evaluation of right operand
+            // If it's false, returns "false" as a result and jumps directly to the end (short-circuit evaluation)
+            "push 0",
+            "b " + end,
+            // Evaluates the right operand
+            leftTrue + ":",
+            visit(n.right),
+            "push 1",
+            "beq " + rightTrue,
+            // If it's false, returns "false" and jumps to the end
+            "push 0",
+            "b " + end,
+            // If it's true, returns "true"
+            rightTrue + ":",
+            "push 1",
+            end + ":"
+        );
+    }
+
     // TODO: (AND operator) apply short-circuit evaluation by returning false (0) immediately
     //      in case the first operand is false
 

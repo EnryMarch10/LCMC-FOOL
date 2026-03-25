@@ -5,6 +5,7 @@ import static compiler.lib.FOOLlib.lowerizeFirstChar;
 
 import compiler.AST.*;
 import compiler.FOOLParser.*;
+import compiler.exc.UnimplException;
 import compiler.lib.DecNode;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
@@ -105,6 +106,23 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         } else if (c.GE() != null) {
             n = new GreaterEqualNode(visit(c.exp(0)), visit(c.exp(1)));
             n.setLine(c.GE().getSymbol().getLine());
+        } else if (c.LE() != null) {
+            throw new UnimplException();
+        } else {
+            throw new IllegalStateException("Every type of operator is null.");
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitAndOr(AndOrContext c) {
+        if (print) printVarAndProdName(c);
+        Node n;
+        if(c.AND() != null) {
+            n = new AndNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.AND().getSymbol().getLine());
+        } else if (c.OR() != null) {
+            throw new UnimplException();
         } else {
             throw new IllegalStateException("Every type of operator is null.");
         }

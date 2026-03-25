@@ -141,6 +141,15 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         return new BoolTypeNode();
     }
 
+    @Override
+    public TypeNode visitNode(AndNode n) throws TypeException {
+        if (print) printNode(n);
+        if(!(isSubtype(visit(n.left), new BoolTypeNode()) && isSubtype(visit(n.right), new BoolTypeNode()))) {
+            throw new TypeException("Non-boolean operands in and", n.getLine());
+        }
+        return new BoolTypeNode();
+    }
+
     // TODO: (NOT operator) This operator can be applied to booleans only
 
     @Override
