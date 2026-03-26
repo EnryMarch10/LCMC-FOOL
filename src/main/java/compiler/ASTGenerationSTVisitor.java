@@ -25,9 +25,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public boolean print;
     String indent;
 
-    ASTGenerationSTVisitor() {}
+    public ASTGenerationSTVisitor() {}
 
-    ASTGenerationSTVisitor(boolean debug) {
+    public ASTGenerationSTVisitor(boolean debug) {
         print = debug;
     }
 

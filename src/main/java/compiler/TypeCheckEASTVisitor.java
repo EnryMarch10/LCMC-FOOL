@@ -27,11 +27,11 @@ import compiler.lib.TypeNode;
  */
 public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeException> {
 
-    TypeCheckEASTVisitor() {
+    public TypeCheckEASTVisitor() {
         super(true);
     } // enables incomplete tree exceptions
 
-    TypeCheckEASTVisitor(boolean debug) {
+    public TypeCheckEASTVisitor(boolean debug) {
         super(true, debug);
     } // enables print for debugging
 

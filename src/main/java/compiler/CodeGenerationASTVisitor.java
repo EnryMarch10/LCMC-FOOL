@@ -16,9 +16,9 @@ import compiler.lib.Node;
  */
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
-    CodeGenerationASTVisitor() {}
+    public CodeGenerationASTVisitor() {}
 
-    CodeGenerationASTVisitor(boolean debug) {
+    public CodeGenerationASTVisitor(boolean debug) {
         super(false, debug);
     } // enables print for debugging
 

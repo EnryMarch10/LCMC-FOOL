@@ -27,14 +27,14 @@ import java.util.Map;
  * corresponding {@link STentry}.
  */
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
-    int stErrors = 0;
+    public int stErrors = 0;
     private final List<Map<String, STentry>> symTable = new ArrayList<>();
     private int nestingLevel = 0; // current nesting level
     private int decOffset = -2; // counter for offset of local declarations at current nesting level
 
-    SymbolTableASTVisitor() {}
+    public SymbolTableASTVisitor() {}
 
-    SymbolTableASTVisitor(boolean debug) {
+    public SymbolTableASTVisitor(boolean debug) {
         super(debug);
     } // enables print for debugging
 
