@@ -1,7 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import compiler.lib.FOOLlib;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -11,11 +10,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 public class OperatorsTest {
     private static final String OPS = "sample_programs/tests/ops/";
     private static final String OPS_LE_OR_DIV_EQ = OPS + "le-or-div-not/";
-
-    @BeforeEach
-    void init() { // LCMC compiler is though to run on a new JVM every time
-        FOOLlib.typeErrors = 0;
-    }
 
     @Test
     void testLe() {

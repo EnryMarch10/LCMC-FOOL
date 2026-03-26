@@ -171,10 +171,10 @@ public class AST {
     }
 
     public static class NotNode extends Node {
-        final Node val;
+        final Node exp;
 
-        NotNode(Node n) {
-            val = n;
+        NotNode(Node e) {
+            exp = e;
         }
 
         @Override

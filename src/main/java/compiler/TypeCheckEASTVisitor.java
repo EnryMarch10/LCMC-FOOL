@@ -132,26 +132,28 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (print) printNode(n);
         TypeNode l = visit(n.left);
         TypeNode r = visit(n.right);
-        if (!(isSubtype(l, r) || isSubtype(r, l)))
-            throw new TypeException("Incompatible types in lessequal", n.getLine());
+        // TODO: when adding classes, also check that l and r are subtypes of Integer
+        if (!(isSubtype(l, r) || isSubtype(r, l))) {
+            throw new TypeException("Incompatible types in less equal", n.getLine());
+        }
         return new BoolTypeNode();
     }
 
     @Override
     public TypeNode visitNode(OrNode n) throws TypeException {
         if (print) printNode(n);
-        TypeNode l = visit(n.left);
-        TypeNode r = visit(n.right);
-        if (!(l instanceof BoolTypeNode && r instanceof BoolTypeNode))
-            throw new TypeException("Not bool types in or", n.getLine());
+        if (!(isSubtype(visit(n.left), new BoolTypeNode()) && isSubtype(visit(n.right), new BoolTypeNode()))) {
+            throw new TypeException("Non-boolean operands in or", n.getLine());
+        }
         return new BoolTypeNode();
     }
 
     @Override
     public TypeNode visitNode(NotNode n) throws TypeException {
         if (print) printNode(n);
-        TypeNode v = visit(n.val);
-        if (!(v instanceof BoolTypeNode)) throw new TypeException("Not bool type in not", n.getLine());
+        if (!(isSubtype(visit(n.exp), new BoolTypeNode()))) {
+            throw new TypeException("Non-boolean expression in not", n.getLine());
+        }
         return new BoolTypeNode();
     }
 

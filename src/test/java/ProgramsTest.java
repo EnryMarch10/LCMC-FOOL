@@ -60,6 +60,9 @@ class ProgramsTest {
     }
 
     public static int getTypeErrors(final CharStream input) {
+        // Static fields must be always reset
+        FOOLlib.reset();
+
         FOOLLexer lexer = new FOOLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         FOOLParser parser = new FOOLParser(tokens);
@@ -86,6 +89,9 @@ class ProgramsTest {
     }
 
     public static void testResult(String fileName, final CharStream input, String result) {
+        // Static fields must be always reset
+        FOOLlib.reset();
+
         FOOLLexer lexer = new FOOLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         FOOLParser parser = new FOOLParser(tokens);

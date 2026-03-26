@@ -156,7 +156,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String l1 = freshLabel();
         String l2 = freshLabel();
         return nlJoin(
-                visit(n.val),
+                visit(n.exp),
                 "push 1", // push true
                 "beq " + l1, // checks if cond is true
                 "push 1", // return true

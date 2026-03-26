@@ -72,4 +72,11 @@ public class FOOLlib {
     public static String getCode() {
         return funCode;
     }
+
+    public static void reset() {
+        typeErrors = 0;
+        labCount = 0;
+        funlabCount = 0;
+        funCode = null;
+    }
 }
