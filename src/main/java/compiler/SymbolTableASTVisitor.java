@@ -27,21 +27,25 @@ import java.util.Map;
  * corresponding {@link STentry}.
  */
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
-    int stErrors = 0;
+    public int stErrors = 0;
     private final List<Map<String, STentry>> symTable = new ArrayList<>();
     private int nestingLevel = 0; // current nesting level
     private int decOffset = -2; // counter for offset of local declarations at current nesting level
 
-    SymbolTableASTVisitor() {}
+    public SymbolTableASTVisitor() {}
 
-    SymbolTableASTVisitor(boolean debug) {
+    public SymbolTableASTVisitor(boolean debug) {
         super(debug);
     } // enables print for debugging
 
     private STentry stLookup(String id) {
         int j = nestingLevel;
         STentry entry = null;
-        while (j >= 0 && entry == null) entry = symTable.get(j--).get(id);
+        if (symTable.size() > j) {
+            while (j >= 0 && entry == null) {
+                entry = symTable.get(j--).get(id);
+            }
+        }
         return entry;
     }
 
@@ -137,7 +141,38 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     @Override
+    public Void visitNode(LessEqualNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(OrNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(NotNode n) {
+        if (print) printNode(n);
+        visit(n.exp);
+        return null;
+    }
+
+    @Override
     public Void visitNode(TimesNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(DivNode n) {
         if (print) printNode(n);
         visit(n.left);
         visit(n.right);

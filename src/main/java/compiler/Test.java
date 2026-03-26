@@ -7,6 +7,7 @@ import compiler.lib.Node;
 import compiler.lib.TypeNode;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,7 +17,7 @@ import svm.SVMLexer;
 import svm.SVMParser;
 
 public class Test {
-    static void main(String[] args) throws Exception {
+    static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.err.println("ERROR: Fool program directory must be passed as input");
             System.exit(1);

@@ -27,11 +27,11 @@ import compiler.lib.TypeNode;
  */
 public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeException> {
 
-    TypeCheckEASTVisitor() {
+    public TypeCheckEASTVisitor() {
         super(true);
     } // enables incomplete tree exceptions
 
-    TypeCheckEASTVisitor(boolean debug) {
+    public TypeCheckEASTVisitor(boolean debug) {
         super(true, debug);
     } // enables print for debugging
 
@@ -128,10 +128,48 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     }
 
     @Override
+    public TypeNode visitNode(LessEqualNode n) throws TypeException {
+        if (print) printNode(n);
+        TypeNode l = visit(n.left);
+        TypeNode r = visit(n.right);
+        // TODO: when adding classes, also check that l and r are subtypes of Integer
+        if (!(isSubtype(l, r) || isSubtype(r, l))) {
+            throw new TypeException("Incompatible types in less equal", n.getLine());
+        }
+        return new BoolTypeNode();
+    }
+
+    @Override
+    public TypeNode visitNode(OrNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.left), new BoolTypeNode()) && isSubtype(visit(n.right), new BoolTypeNode()))) {
+            throw new TypeException("Non-boolean operands in or", n.getLine());
+        }
+        return new BoolTypeNode();
+    }
+
+    @Override
+    public TypeNode visitNode(NotNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.exp), new BoolTypeNode()))) {
+            throw new TypeException("Non-boolean expression in not", n.getLine());
+        }
+        return new BoolTypeNode();
+    }
+
+    @Override
     public TypeNode visitNode(TimesNode n) throws TypeException {
         if (print) printNode(n);
         if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
             throw new TypeException("Non integers in multiplication", n.getLine());
+        return new IntTypeNode();
+    }
+
+    @Override
+    public TypeNode visitNode(DivNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
+            throw new TypeException("Non integers in division", n.getLine());
         return new IntTypeNode();
     }
 

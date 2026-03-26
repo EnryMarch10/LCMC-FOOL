@@ -5,6 +5,7 @@ import static compiler.lib.FOOLlib.lowerizeFirstChar;
 
 import compiler.AST.*;
 import compiler.FOOLParser.*;
+import compiler.exc.UnimplException;
 import compiler.lib.DecNode;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
@@ -24,9 +25,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public boolean print;
     String indent;
 
-    ASTGenerationSTVisitor() {}
+    public ASTGenerationSTVisitor() {}
 
-    ASTGenerationSTVisitor(boolean debug) {
+    public ASTGenerationSTVisitor(boolean debug) {
         print = debug;
     }
 
@@ -73,9 +74,16 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitTimesDiv(TimesDivContext c) {
         if (print) printVarAndProdName(c);
-        Node n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-        n.setLine(c.TIMES().getSymbol().getLine()); // setLine added
-        // TODO: See PlusMinus
+        Node n;
+        if (c.TIMES() != null) {
+            n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.TIMES().getSymbol().getLine());
+        } else if (c.DIV() != null) {
+            n = new DivNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.DIV().getSymbol().getLine());
+        } else {
+            throw new IllegalStateException("Every type of operator is null.");
+        }
         return n;
     }
 
@@ -98,9 +106,41 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitComp(CompContext c) {
         if (print) printVarAndProdName(c);
-        Node n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
-        n.setLine(c.EQ().getSymbol().getLine());
-        // TODO: See PlusMinus
+        Node n;
+        if (c.EQ() != null) {
+            n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.EQ().getSymbol().getLine());
+        } else if (c.GE() != null) {
+            throw new UnimplException();
+        } else if (c.LE() != null) {
+            n = new LessEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.LE().getSymbol().getLine());
+        } else {
+            throw new IllegalStateException("Every type of operator is null.");
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitAndOr(AndOrContext c) {
+        if (print) printVarAndProdName(c);
+        Node n;
+        if (c.AND() != null) {
+            throw new UnimplException();
+        } else if (c.OR() != null) {
+            n = new OrNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.OR().getSymbol().getLine());
+        } else {
+            throw new IllegalStateException("Every type of operator is null.");
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitNot(NotContext c) {
+        if (print) printVarAndProdName(c);
+        Node n = new NotNode(visit(c.exp()));
+        n.setLine(c.NOT().getSymbol().getLine());
         return n;
     }
 

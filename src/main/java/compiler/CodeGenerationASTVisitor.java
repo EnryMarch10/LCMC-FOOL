@@ -16,9 +16,9 @@ import compiler.lib.Node;
  */
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
-    CodeGenerationASTVisitor() {}
+    public CodeGenerationASTVisitor() {}
 
-    CodeGenerationASTVisitor(boolean debug) {
+    public CodeGenerationASTVisitor(boolean debug) {
         super(false, debug);
     } // enables print for debugging
 
@@ -116,9 +116,66 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
+    public String visitNode(LessEqualNode n) {
+        if (print) printNode(n);
+        String l1 = freshLabel();
+        String l2 = freshLabel();
+        return nlJoin(
+                visit(n.left),
+                visit(n.right),
+                "bleq " + l1, // checks if left equals right
+                "push 0", // return false
+                "b " + l2,
+                l1 + ":",
+                "push 1", // return true
+                l2 + ":");
+    }
+
+    @Override
+    public String visitNode(OrNode n) {
+        if (print) printNode(n);
+        String l1 = freshLabel();
+        String l2 = freshLabel();
+        return nlJoin( // Does SHORT CIRCUIT EVALUATION
+                visit(n.left),
+                "push 1", // push true to check if left cond is true
+                "beq " + l1, // checks if left cond is true
+                visit(n.right),
+                "push 1", // push true to check if right cond is true
+                "beq " + l1, // checks if right cond is true
+                "push 0", // return false
+                "b " + l2,
+                l1 + ":",
+                "push 1", // return true
+                l2 + ":");
+    }
+
+    @Override
+    public String visitNode(NotNode n) {
+        if (print) printNode(n);
+        String l1 = freshLabel();
+        String l2 = freshLabel();
+        return nlJoin(
+                visit(n.exp),
+                "push 1", // push true
+                "beq " + l1, // checks if cond is true
+                "push 1", // return true
+                "b " + l2,
+                l1 + ":",
+                "push 0", // return false
+                l2 + ":");
+    }
+
+    @Override
     public String visitNode(TimesNode n) {
         if (print) printNode(n);
         return nlJoin(visit(n.left), visit(n.right), "mult");
+    }
+
+    @Override
+    public String visitNode(DivNode n) {
+        if (print) printNode(n);
+        return nlJoin(visit(n.left), visit(n.right), "div");
     }
 
     @Override

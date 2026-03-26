@@ -1,0 +1,5 @@
+let
+  var x:int = true / true;
+  var y:int = 24 / true;
+in
+  print(if ((x + 1) == 2) then { true } else { false });
