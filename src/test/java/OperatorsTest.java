@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import compiler.lib.FOOLlib;
 import org.junit.jupiter.api.*;
@@ -34,7 +35,9 @@ public class OperatorsTest {
     void testDiv() {
         ProgramsTest.testResultTrueFromFile(OPS_LE_OR_DIV_EQ + "div.fool");
         ProgramsTest.testResultTrueFromFile(OPS_LE_OR_DIV_EQ + "div-bool.fool");
-        assertEquals(1, ProgramsTest.getTypeErrors(ProgramsTest.fromFile(OPS_LE_OR_DIV_EQ + "div-by0.fool")));
+        assertThrows(
+                ArithmeticException.class,
+                () -> ProgramsTest.testResultTrueFromFile(OPS_LE_OR_DIV_EQ + "div-by0.fool"));
     }
 
     @Test
