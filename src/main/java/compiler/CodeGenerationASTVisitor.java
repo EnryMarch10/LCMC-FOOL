@@ -121,15 +121,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String l1 = freshLabel();
         String l2 = freshLabel();
         return nlJoin(
-            // Pushes the right operand first, since l >= r is equivalent to r <= l
-            visit(n.right),
-            visit(n.left),
-            "bleq " + l1, // checks if left equals right
-            "push 0", // return false
-            "b " + l2,
-            l1 + ":",
-            "push 1", // return true
-            l2 + ":");
+                // Pushes the right operand first, since l >= r is equivalent to r <= l
+                visit(n.right),
+                visit(n.left),
+                "bleq " + l1, // checks if left equals right
+                "push 0", // return false
+                "b " + l2,
+                l1 + ":",
+                "push 1", // return true
+                l2 + ":");
     }
 
     @Override
@@ -139,26 +139,25 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String leftTrue = freshLabel();
         String rightTrue = freshLabel();
         return nlJoin(
-            // Evaluates the left operand
-            visit(n.left),
-            "push 1",
-            "beq " + leftTrue, // If it's true, jumps to the evaluation of right operand
-            // If it's false, returns "false" as a result and jumps directly to the end (short-circuit evaluation)
-            "push 0",
-            "b " + end,
-            // Evaluates the right operand
-            leftTrue + ":",
-            visit(n.right),
-            "push 1",
-            "beq " + rightTrue,
-            // If it's false, returns "false" and jumps to the end
-            "push 0",
-            "b " + end,
-            // If it's true, returns "true"
-            rightTrue + ":",
-            "push 1",
-            end + ":"
-        );
+                // Evaluates the left operand
+                visit(n.left),
+                "push 1",
+                "beq " + leftTrue, // If it's true, jumps to the evaluation of right operand
+                // If it's false, returns "false" as a result and jumps directly to the end (short-circuit evaluation)
+                "push 0",
+                "b " + end,
+                // Evaluates the right operand
+                leftTrue + ":",
+                visit(n.right),
+                "push 1",
+                "beq " + rightTrue,
+                // If it's false, returns "false" and jumps to the end
+                "push 0",
+                "b " + end,
+                // If it's true, returns "true"
+                rightTrue + ":",
+                "push 1",
+                end + ":");
     }
 
     public String visitNode(NotNode n) {
@@ -166,17 +165,16 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String expressionTrue = freshLabel();
         String end = freshLabel();
         return nlJoin(
-            // Evaluates expression
-            visit(n.exp),
-            "push 1",
-            "beq " + expressionTrue, // If the expression is true, jumps and pushes 0 (false)
-            // Else, pushes 1 (true)
-            "push 1",
-            "b " + end,
-            expressionTrue + ":",
-            "push 0",
-            end + ":"
-        );
+                // Evaluates expression
+                visit(n.exp),
+                "push 1",
+                "beq " + expressionTrue, // If the expression is true, jumps and pushes 0 (false)
+                // Else, pushes 1 (true)
+                "push 1",
+                "b " + end,
+                expressionTrue + ":",
+                "push 0",
+                end + ":");
     }
 
     @Override

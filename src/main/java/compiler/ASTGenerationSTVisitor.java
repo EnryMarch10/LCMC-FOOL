@@ -100,7 +100,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public Node visitComp(CompContext c) {
         if (print) printVarAndProdName(c);
         Node n;
-        if(c.EQ() != null) {
+        if (c.EQ() != null) {
             n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
             n.setLine(c.EQ().getSymbol().getLine());
         } else if (c.GE() != null) {
@@ -118,7 +118,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public Node visitAndOr(AndOrContext c) {
         if (print) printVarAndProdName(c);
         Node n;
-        if(c.AND() != null) {
+        if (c.AND() != null) {
             n = new AndNode(visit(c.exp(0)), visit(c.exp(1)));
             n.setLine(c.AND().getSymbol().getLine());
         } else if (c.OR() != null) {
