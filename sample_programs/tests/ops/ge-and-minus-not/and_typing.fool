@@ -1,0 +1,6 @@
+/* Should compile without problems and print "5" */
+if (true && false) then {
+    print(10)
+} else {
+    print(5)
+};

@@ -1,0 +1,11 @@
+/* Should launch a typing error for "3 && false" */
+if (3 && false) then {
+    /* Should launch a typing error for "true && -5" */
+    if(true && -5) then {
+        print(4)
+    } else {
+        print(-30)
+    }
+} else {
+    print(1)
+};

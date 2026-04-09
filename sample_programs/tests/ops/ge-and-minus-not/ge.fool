@@ -1,0 +1,10 @@
+let
+    fun testGreaterOrEqual:bool (left:int, right:int)
+        print(left >= right);
+    var bigger:int = 5;
+    var smaller:int = 3;
+in
+    testGreaterOrEqual(bigger, smaller) + /* Expected: 1 (true) */
+    testGreaterOrEqual(bigger, bigger) + /* Expected: 1 (true) */
+    testGreaterOrEqual(smaller, bigger) + /* Expected: 0 (false) */
+    testGreaterOrEqual(true, bigger); /* Expected: 0 (false) */

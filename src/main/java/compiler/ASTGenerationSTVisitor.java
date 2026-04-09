@@ -5,7 +5,6 @@ import static compiler.lib.FOOLlib.lowerizeFirstChar;
 
 import compiler.AST.*;
 import compiler.FOOLParser.*;
-import compiler.exc.UnimplException;
 import compiler.lib.DecNode;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
@@ -90,16 +89,16 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitPlusMinus(PlusMinusContext c) {
         if (print) printVarAndProdName(c);
-        Node n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
-        n.setLine(c.PLUS().getSymbol().getLine());
-        // TODO: Check node type with the following statement:
-        //        if (c.PLUS() != null) {
-        //            // Generate plus node
-        //        } else if (c.MINUS() != null) {
-        //            // Generate minus node
-        //        } else {
-        //            throw new IllegalStateException("Every type of operator is null.");
-        //        }
+        Node n;
+        if (c.PLUS() != null) {
+            n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.PLUS().getSymbol().getLine());
+        } else if (c.MINUS() != null) {
+            n = new MinusNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.MINUS().getSymbol().getLine());
+        } else {
+            throw new IllegalStateException("Every type of operator is null.");
+        }
         return n;
     }
 
@@ -111,7 +110,8 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
             n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
             n.setLine(c.EQ().getSymbol().getLine());
         } else if (c.GE() != null) {
-            throw new UnimplException();
+            n = new GreaterEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.GE().getSymbol().getLine());
         } else if (c.LE() != null) {
             n = new LessEqualNode(visit(c.exp(0)), visit(c.exp(1)));
             n.setLine(c.LE().getSymbol().getLine());
@@ -126,7 +126,8 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         if (print) printVarAndProdName(c);
         Node n;
         if (c.AND() != null) {
-            throw new UnimplException();
+            n = new AndNode(visit(c.exp(0)), visit(c.exp(1)));
+            n.setLine(c.AND().getSymbol().getLine());
         } else if (c.OR() != null) {
             n = new OrNode(visit(c.exp(0)), visit(c.exp(1)));
             n.setLine(c.OR().getSymbol().getLine());
@@ -136,7 +137,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return n;
     }
 
-    @Override
     public Node visitNot(NotContext c) {
         if (print) printVarAndProdName(c);
         Node n = new NotNode(visit(c.exp()));

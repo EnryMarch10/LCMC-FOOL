@@ -1,0 +1,7 @@
+let
+    fun f:int(x:int)
+        x + 2;
+in
+    print(5 - 3) + /* Expected: 2 */
+    print(-4 - 2) +  /* Expected: -6 */
+    print(4 - f(2)); /* Expected: 0 */

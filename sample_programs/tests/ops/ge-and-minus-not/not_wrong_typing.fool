@@ -1,0 +1,6 @@
+/* Should throw a typing error at "!5" */
+if(!5) then {
+    print(true)
+} else {
+    print(10)
+};
