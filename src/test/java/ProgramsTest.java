@@ -168,9 +168,7 @@ class ProgramsTest {
 
         // The FOOL program should give expected output
         // TODO: .trim() could be avoided in generalization
-        assertEquals(result, baos.toString().trim()
-            .replace("\n", "")
-            .replace("\r", ""));
+        assertEquals(result, baos.toString().trim().replace("\n", "").replace("\r", ""));
     }
 
     public static void testResultFromString(final String input, String result) {

@@ -138,14 +138,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String l1 = freshLabel();
         String l2 = freshLabel();
         return nlJoin(
-            visit(n.left),
-            visit(n.right),
-            "bleq " + l1, // checks if left <= right
-            "push 0", // return false
-            "b " + l2,
-            l1 + ":",
-            "push 1", // return true
-            l2 + ":");
+                visit(n.left),
+                visit(n.right),
+                "bleq " + l1, // checks if left <= right
+                "push 0", // return false
+                "b " + l2,
+                l1 + ":",
+                "push 1", // return true
+                l2 + ":");
     }
 
     @Override
@@ -200,16 +200,16 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String expressionTrue = freshLabel();
         String end = freshLabel();
         return nlJoin(
-            // Evaluates expression
-            visit(n.exp),
-            "push 1", // push true
-            "beq " + expressionTrue, // If the expression is true, jumps and pushes 0 (false)
-            // Else, pushes 1 (true)
-            "push 1", // return true
-            "b " + end,
-            expressionTrue + ":",
-            "push 0", // return false
-            end + ":");
+                // Evaluates expression
+                visit(n.exp),
+                "push 1", // push true
+                "beq " + expressionTrue, // If the expression is true, jumps and pushes 0 (false)
+                // Else, pushes 1 (true)
+                "push 1", // return true
+                "b " + end,
+                expressionTrue + ":",
+                "push 0", // return false
+                end + ":");
     }
 
     @Override
