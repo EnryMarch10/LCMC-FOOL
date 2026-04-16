@@ -174,6 +174,13 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return n;
     }
 
+    // TODO: In every OOP context where the token ID is not the first token of the production,
+    //  it's necessary to check whether the ID exists. This is true for the following productions:
+    //  - cldec: Check that the list of IDs is not empty (!c.ID().isEmpty())
+    //  - methdec: same as cldec
+    //  - new: Check that ID is not null (c.ID() != null)
+    //  - dotcall: Check that the second ID is not null (?)
+
     @Override
     public Node visitIntType(IntTypeContext c) {
         if (print) printVarAndProdName(c);
