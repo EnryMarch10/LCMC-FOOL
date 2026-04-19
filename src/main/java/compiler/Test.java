@@ -38,8 +38,7 @@ public class Test {
                 + " syntax errors.\n");
 
         System.out.println("Generating AST.");
-        // TODO: test ASTGenerationSTVisitor
-        ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(true); // use true to visualize the ST
+        ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
         Node ast = visitor.visit(st);
         System.out.println();
 

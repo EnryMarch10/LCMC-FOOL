@@ -175,13 +175,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return n;
     }
 
-    // TODO: In every OOP context where the token ID is not the first token of the production,
-    //  it's necessary to check whether the ID exists. This is true for the following productions:
-    //  - cldec: Check that the list of IDs is not empty (!c.ID().isEmpty())
-    //  - methdec: same as cldec
-    //  - new: Check that ID is not null (c.ID() != null)
-    //  - dotcall: Check that the second ID is not null (?)
-
     @Override
     public Node visitIntType(IntTypeContext c) {
         if (print) printVarAndProdName(c);
@@ -268,6 +261,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
             methodsList.add((MethodNode) visit(methdec));
         }
         Node n = null;
+        // Check needed since ID is not the first token in the production
         if (!c.ID().isEmpty()) {
             n = new ClassNode(c.ID(0).getText(), fieldsList, methodsList);
             n.setLine(c.CLASS().getSymbol().getLine());
@@ -287,6 +281,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         List<DecNode> decList = new ArrayList<>();
         for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
         Node n = null;
+        // Check needed since ID is not the first token in the production
         if (!c.ID().isEmpty()) { // non-incomplete ST
             n = new MethodNode(c.ID(0).getText(), (TypeNode) visit(c.type(0)), parList, decList, visit(c.exp()));
             n.setLine(c.FUN().getSymbol().getLine());
@@ -302,6 +297,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
             argsList.add(visit(exp));
         }
         Node n = null;
+        // Check needed since ID is not the first token in the production
         if (c.ID() != null) {
             n = new NewNode(c.ID().getText(), argsList);
             n.setLine(c.NEW().getSymbol().getLine());
@@ -317,6 +313,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
             argsList.add(visit(exp));
         }
         Node n = null;
+        // Check needed only for the second ID, since the first one is at the beginning of the production.
         if (c.ID(1) != null) {
             n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), argsList);
             n.setLine(c.ID(0).getSymbol().getLine());
