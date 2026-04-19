@@ -10,6 +10,8 @@ import compiler.lib.Node;
 import compiler.lib.TypeNode;
 import java.util.ArrayList;
 import java.util.List;
+
+import jdk.jshell.spi.ExecutionControl;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -174,13 +176,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return n;
     }
 
-    // TODO: In every OOP context where the token ID is not the first token of the production,
-    //  it's necessary to check whether the ID exists. This is true for the following productions:
-    //  - cldec: Check that the list of IDs is not empty (!c.ID().isEmpty())
-    //  - methdec: same as cldec
-    //  - new: Check that ID is not null (c.ID() != null)
-    //  - dotcall: Check that the second ID is not null (?)
-
     @Override
     public Node visitIntType(IntTypeContext c) {
         if (print) printVarAndProdName(c);
@@ -251,5 +246,83 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         Node n = new CallNode(c.ID().getText(), arglist);
         n.setLine(c.ID().getSymbol().getLine());
         return n;
+    }
+
+    @Override
+    public Node visitCldec(CldecContext c) {
+        if (print) printVarAndProdName(c);
+        List<FieldNode> fields = new ArrayList<>();
+        for (int i = 1; i < c.ID().size(); i++) {
+            FieldNode field = new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
+            field.setLine(c.ID(i).getSymbol().getLine());
+            fields.add(field);
+        }
+        List<MethodNode> methods = new ArrayList<>();
+        for (MethdecContext mdec : c.methdec()) methods.add((MethodNode) visit(mdec));
+        Node n = null;
+        if (!c.ID().isEmpty()) { // non-incomplete ST
+            n = new ClassNode(c.ID(0).getText(), fields, methods);
+            n.setLine(c.CLASS().getSymbol().getLine());
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitMethdec(MethdecContext c) {
+        if (print) printVarAndProdName(c);
+        List<ParNode> pars = new ArrayList<>();
+        for (int i = 1; i < c.ID().size(); i++) {
+            ParNode p = new ParNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
+            p.setLine(c.ID(i).getSymbol().getLine());
+            pars.add(p);
+        }
+        List<DecNode> decs = new ArrayList<>();
+        for (DecContext dec : c.dec()) decs.add((DecNode) visit(dec));
+        Node n = null;
+        if (!c.ID().isEmpty()) { // non-incomplete ST
+            n = new MethodNode(c.ID(0).getText(), (TypeNode) visit(c.type(0)), pars, decs, visit(c.exp()));
+            n.setLine(c.FUN().getSymbol().getLine());
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitNull(NullContext c) {
+        if (print) printVarAndProdName(c);
+        Node n = new EmptyNode();
+        n.setLine(c.NULL().getSymbol().getLine());
+        return n;
+    }
+
+    @Override
+    public Node visitNew(NewContext c) {
+        if (print) printVarAndProdName(c);
+        List<Node> args = new ArrayList<>();
+        for (ExpContext arg : c.exp()) args.add(visit(arg));
+        Node n = null;
+        if (c.ID() != null) { // non-incomplete ST
+            n = new NewNode(c.ID().getText(), args);
+            n.setLine(c.NEW().getSymbol().getLine());
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitDotCall(DotCallContext c) {
+        if (print) printVarAndProdName(c);
+        List<Node> args = new ArrayList<>();
+        for (ExpContext arg : c.exp()) args.add(visit(arg));
+        Node n = null;
+        if (c.ID(1) != null) { // non-incomplete ST
+            n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), args);
+            n.setLine(c.ID(0).getSymbol().getLine());
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitIdType(IdTypeContext c) {
+        if (print) printVarAndProdName(c);
+        return new RefTypeNode(c.ID().getText());
     }
 }
