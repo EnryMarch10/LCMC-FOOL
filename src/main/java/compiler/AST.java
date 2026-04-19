@@ -18,6 +18,9 @@ public class AST {
         final List<DecNode> declist;
         final Node exp;
 
+        // TODO: distinguish between normal declarations and class declarations?
+        //  In that case, create a second field List<ClassDecNode> classDecList with class declarations
+        //  (and remember to change the visit of ProgLetInContext to put class declarations in the new field)
         ProgLetInNode(List<DecNode> d, Node e) {
             declist = Collections.unmodifiableList(d);
             exp = e;
