@@ -60,8 +60,6 @@ public class AST {
             exp = e;
         }
 
-        // void setType(TypeNode t) {type = t;}
-
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
@@ -370,8 +368,8 @@ public class AST {
 
         ClassNode(String id, List<FieldNode> fields, List<MethodNode> methods) {
             this.id = id;
-            this.fields = fields;
-            this.methods = methods;
+            this.fields = Collections.unmodifiableList(fields);
+            this.methods = Collections.unmodifiableList(methods);
         }
 
         @Override
@@ -383,9 +381,9 @@ public class AST {
     public static class FieldNode extends DecNode {
         final String id;
 
-        FieldNode(String i, TypeNode t) {
-            id = i;
-            type = t;
+        FieldNode(String id, TypeNode type) {
+            this.id = id;
+            this.type = type;
         }
 
         @Override
@@ -396,17 +394,17 @@ public class AST {
 
     public static class MethodNode extends DecNode {
         final String id;
-        final TypeNode retType;
-        final List<ParNode> parlist;
-        final List<DecNode> declist;
+        final TypeNode returnType;
+        final List<ParNode> pars;
+        final List<DecNode> decs;
         final Node exp;
 
-        MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
-            id = i;
-            retType = rt;
-            parlist = Collections.unmodifiableList(pl);
-            declist = Collections.unmodifiableList(dl);
-            exp = e;
+        MethodNode(String id, TypeNode returnType, List<ParNode> pars, List<DecNode> decs, Node exp) {
+            this.id = id;
+            this.returnType = returnType;
+            this.pars = Collections.unmodifiableList(pars);
+            this.decs = Collections.unmodifiableList(decs);
+            this.exp = exp;
         }
 
         @Override
@@ -416,16 +414,16 @@ public class AST {
     }
 
     public static class ClassCallNode extends Node {
-        final String classId;
         final String methodId;
-        final List<Node> arglist;
+        final String classId;
+        final List<Node> args;
         STentry entry; // TODO: use when building EAST
         int nl; // TODO: use during codegen and set previously
 
-        ClassCallNode(String cId, String mId, List<Node> args) {
-            this.classId = cId;
-            this.methodId = mId;
-            this.arglist = args;
+        ClassCallNode(String classId, String methodId, List<Node> args) {
+            this.classId = classId;
+            this.methodId = methodId;
+            this.args = Collections.unmodifiableList(args);
         }
 
         @Override
@@ -436,13 +434,13 @@ public class AST {
 
     public static class NewNode extends Node {
         final String id;
-        final List<Node> arglist;
+        final List<Node> args;
         STentry entry; // TODO: verify when building EAST
         int nl; // TODO: use during codegen and set previously
 
-        NewNode(String i, List<Node> args) {
-            this.id = i;
-            this.arglist = args;
+        NewNode(String id, List<Node> args) {
+            this.id = id;
+            this.args = Collections.unmodifiableList(args);
         }
 
         @Override
@@ -459,12 +457,12 @@ public class AST {
     }
 
     public static class ClassTypeNode extends TypeNode {
-        final List<TypeNode> allFields;
-        final List<ArrowTypeNode> allMethods;
+        final List<TypeNode> fields;
+        final List<ArrowTypeNode> methods;
 
-        ClassTypeNode(List<TypeNode> af, List<ArrowTypeNode> am) {
-            this.allFields = af;
-            this.allMethods = am;
+        ClassTypeNode(List<TypeNode> fields, List<ArrowTypeNode> methods) {
+            this.fields = fields;
+            this.methods = methods;
         }
 
         @Override
@@ -476,8 +474,8 @@ public class AST {
     public static class RefTypeNode extends TypeNode {
         final String id;
 
-        RefTypeNode(String i) {
-            this.id = i;
+        RefTypeNode(String id) {
+            this.id = id;
         }
 
         @Override

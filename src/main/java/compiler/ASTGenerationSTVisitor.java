@@ -149,6 +149,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public Node visitVardec(VardecContext c) {
         if (print) printVarAndProdName(c);
         Node n = null;
+        // TODO: Bug here, c.ID() is never null, when error it contains "<missing ID>" as a string instead
         if (c.ID() != null) { // non-incomplete ST
             n = new VarNode(c.ID().getText(), (TypeNode) visit(c.type()), visit(c.exp()));
             n.setLine(c.VAR().getSymbol().getLine());
@@ -250,20 +251,17 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitCldec(CldecContext c) {
         if (print) printVarAndProdName(c);
-        List<FieldNode> fieldsList = new ArrayList<>();
-        List<MethodNode> methodsList = new ArrayList<>();
+        List<FieldNode> fields = new ArrayList<>();
         for (int i = 1; i < c.ID().size(); i++) {
-            FieldNode f = new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(i - 1)));
-            f.setLine(c.ID(i).getSymbol().getLine());
-            fieldsList.add(f);
+            FieldNode field = new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(i - 1)));
+            field.setLine(c.ID(i).getSymbol().getLine());
+            fields.add(field);
         }
-        for (MethdecContext methdec : c.methdec()) {
-            methodsList.add((MethodNode) visit(methdec));
-        }
+        List<MethodNode> methods = new ArrayList<>();
+        for (MethdecContext mdec : c.methdec()) methods.add((MethodNode) visit(mdec));
         Node n = null;
-        // Check needed since ID is not the first token in the production
-        if (!c.ID().isEmpty()) {
-            n = new ClassNode(c.ID(0).getText(), fieldsList, methodsList);
+        if (!c.ID().isEmpty()) { // non-incomplete ST
+            n = new ClassNode(c.ID(0).getText(), fields, methods);
             n.setLine(c.CLASS().getSymbol().getLine());
         }
         return n;
@@ -272,18 +270,17 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitMethdec(MethdecContext c) {
         if (print) printVarAndProdName(c);
-        List<ParNode> parList = new ArrayList<>();
+        List<ParNode> pars = new ArrayList<>();
         for (int i = 1; i < c.ID().size(); i++) {
-            ParNode p = new ParNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
-            p.setLine(c.ID(i).getSymbol().getLine());
-            parList.add(p);
+            ParNode par = new ParNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
+            par.setLine(c.ID(i).getSymbol().getLine());
+            pars.add(par);
         }
-        List<DecNode> decList = new ArrayList<>();
-        for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
+        List<DecNode> decs = new ArrayList<>();
+        for (DecContext dec : c.dec()) decs.add((DecNode) visit(dec));
         Node n = null;
-        // Check needed since ID is not the first token in the production
         if (!c.ID().isEmpty()) { // non-incomplete ST
-            n = new MethodNode(c.ID(0).getText(), (TypeNode) visit(c.type(0)), parList, decList, visit(c.exp()));
+            n = new MethodNode(c.ID(0).getText(), (TypeNode) visit(c.type(0)), pars, decs, visit(c.exp()));
             n.setLine(c.FUN().getSymbol().getLine());
         }
         return n;
@@ -300,14 +297,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitNew(NewContext c) {
         if (print) printVarAndProdName(c);
-        List<Node> argsList = new ArrayList<>();
-        for (ExpContext exp : c.exp()) {
-            argsList.add(visit(exp));
-        }
+        List<Node> args = new ArrayList<>();
+        for (ExpContext arg : c.exp()) args.add(visit(arg));
         Node n = null;
-        // Check needed since ID is not the first token in the production
-        if (c.ID() != null) {
-            n = new NewNode(c.ID().getText(), argsList);
+        // TODO: Bug here, c.ID() is never null, when error it contains "<missing ID>" as a string instead
+        if (c.ID() != null) { // non-incomplete ST
+            n = new NewNode(c.ID().getText(), args);
             n.setLine(c.NEW().getSymbol().getLine());
         }
         return n;
@@ -316,17 +311,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitDotCall(DotCallContext c) {
         if (print) printVarAndProdName(c);
-        List<Node> argsList = new ArrayList<>();
-        for (ExpContext exp : c.exp()) {
-            argsList.add(visit(exp));
-        }
+        List<Node> args = new ArrayList<>();
+        for (ExpContext arg : c.exp()) args.add(visit(arg));
         Node n = null;
-        // Check needed only for the second ID, since the first one is at the beginning of the production.
-        // TODO: fix this check: even if the second ID is not present, it returns a non-null value.
-        //  It's necessary to properly check whether the second ID is actually present
-        //  (if it's not present, c.ID(1).getText() returns "<missing ID>" as a string)
-        if (c.ID(1) != null) {
-            n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), argsList);
+        // TODO: Bug here, c.ID(1) is never null, when error it contains "<missing ID>" as a string instead
+        if (c.ID(1) != null) { // non-incomplete ST
+            n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), args);
             n.setLine(c.ID(0).getSymbol().getLine());
         }
         return n;
