@@ -10,8 +10,6 @@ import compiler.lib.Node;
 import compiler.lib.TypeNode;
 import java.util.ArrayList;
 import java.util.List;
-
-import jdk.jshell.spi.ExecutionControl;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -253,7 +251,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         if (print) printVarAndProdName(c);
         List<FieldNode> fields = new ArrayList<>();
         for (int i = 1; i < c.ID().size(); i++) {
-            FieldNode field = new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
+            FieldNode field = new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(i - 1)));
             field.setLine(c.ID(i).getSymbol().getLine());
             fields.add(field);
         }
@@ -313,6 +311,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         List<Node> args = new ArrayList<>();
         for (ExpContext arg : c.exp()) args.add(visit(arg));
         Node n = null;
+        // TODO: Bug here c.ID(1) is never null, it contains "<missing ID>" as a string instead
         if (c.ID(1) != null) { // non-incomplete ST
             n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), args);
             n.setLine(c.ID(0).getSymbol().getLine());
