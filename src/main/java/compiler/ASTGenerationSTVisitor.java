@@ -148,6 +148,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public Node visitVardec(VardecContext c) {
         if (print) printVarAndProdName(c);
         Node n = null;
+        // TODO: Bug here, c.ID() is never null, when error it contains "<missing ID>" as a string instead
         if (c.ID() != null) { // non-incomplete ST
             n = new VarNode(c.ID().getText(), (TypeNode) visit(c.type()), visit(c.exp()));
             n.setLine(c.VAR().getSymbol().getLine());
@@ -298,6 +299,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         List<Node> args = new ArrayList<>();
         for (ExpContext arg : c.exp()) args.add(visit(arg));
         Node n = null;
+        // TODO: Bug here, c.ID() is never null, when error it contains "<missing ID>" as a string instead
         if (c.ID() != null) { // non-incomplete ST
             n = new NewNode(c.ID().getText(), args);
             n.setLine(c.NEW().getSymbol().getLine());
@@ -311,7 +313,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         List<Node> args = new ArrayList<>();
         for (ExpContext arg : c.exp()) args.add(visit(arg));
         Node n = null;
-        // TODO: Bug here c.ID(1) is never null, it contains "<missing ID>" as a string instead
+        // TODO: Bug here, c.ID(1) is never null, when error it contains "<missing ID>" as a string instead
         if (c.ID(1) != null) { // non-incomplete ST
             n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), args);
             n.setLine(c.ID(0).getSymbol().getLine());
