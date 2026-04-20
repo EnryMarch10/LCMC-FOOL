@@ -45,6 +45,7 @@ public class AST {
         }
     }
 
+    // TODO: move every OOP class at the bottom of the AST, so that they are all in the same place
     public static class ClassNode extends DecNode {
         final String id;
         final List<FieldNode> fields;

@@ -1,12 +1,12 @@
 let
     class Vector (x:int, y:int) {
-        fun x:int() x;
-        fun y:int() y;
+        fun getX:int() x;
+        fun getY:int() y;
         fun sum:Vector(other:Vector)
             if (other == null) then {
                 null
             } else {
-                new Vector(x + other.x(), y + other.y())
+                new Vector(x + other.getX(), y + other.getY())
             };
     }
 
@@ -16,6 +16,6 @@ let
             var v2:Vector = new Vector(4, 6);
             var vs: Vector = v1.sum(v2);
         in
-            print(vs.x()) + print(vs.y());
+            print(vs.getX()) + print(vs.getY());
 in
     main();

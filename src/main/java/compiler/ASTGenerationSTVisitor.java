@@ -314,6 +314,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         }
         Node n = null;
         // Check needed only for the second ID, since the first one is at the beginning of the production.
+        // TODO: fix this check: even if the second ID is not present, it returns a non-null value.
+        //  It's necessary to properly check whether the second ID is actually present
+        //  (if it's not present, c.ID(1).getText() returns "<missing ID>" as a string)
         if (c.ID(1) != null) {
             n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), argsList);
             n.setLine(c.ID(0).getSymbol().getLine());
