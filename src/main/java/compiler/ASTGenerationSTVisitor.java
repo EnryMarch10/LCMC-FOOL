@@ -290,6 +290,14 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitNull(NullContext c) {
+        if (print) printVarAndProdName(c);
+        Node n = new EmptyNode();
+        n.setLine(c.NULL().getSymbol().getLine());
+        return n;
+    }
+
+    @Override
     public Node visitNew(NewContext c) {
         if (print) printVarAndProdName(c);
         List<Node> argsList = new ArrayList<>();
@@ -321,14 +329,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
             n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), argsList);
             n.setLine(c.ID(0).getSymbol().getLine());
         }
-        return n;
-    }
-
-    @Override
-    public Node visitNull(NullContext c) {
-        if (print) printVarAndProdName(c);
-        Node n = new EmptyNode();
-        n.setLine(c.NULL().getSymbol().getLine());
         return n;
     }
 
