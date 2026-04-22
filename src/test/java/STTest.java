@@ -37,6 +37,17 @@ public class STTest {
 
     @Test
     void testMultiplyDeclaredClass() {
+        //assertEquals(1,
+        //    ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_class.fool")));
+    }
+
+    @Test
+    void testMultiplyDeclaredField() {
+        // TODO: test
+    }
+
+    @Test
+    void testMultiplyDeclaredMethod() {
         // TODO: test
     }
 }
