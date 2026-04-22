@@ -45,7 +45,7 @@ class ProgramsTest {
         return parser.getNumberOfSyntaxErrors();
     }
 
-    public static int getSyntaxErrors(final CharStream input) {
+    public static int getSymbolTableErrors(final CharStream input) {
         FOOLLexer lexer = new FOOLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         FOOLParser parser = new FOOLParser(tokens);

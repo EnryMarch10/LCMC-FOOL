@@ -56,7 +56,7 @@ public class OperatorsTest {
 
     @Test
     void testNot() {
-        assertEquals(1, ProgramsTest.getSyntaxErrors(ProgramsTest.fromFile(OPS_LE_OR_DIV_EQ + "not.fool")));
+        assertEquals(1, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(OPS_LE_OR_DIV_EQ + "not.fool")));
         ProgramsTest.testResultFromFile(OPS_GE_AND_MINUS_NOT + "not.fool", "01");
         assertEquals(
                 1, ProgramsTest.getTypeErrors(ProgramsTest.fromFile(OPS_GE_AND_MINUS_NOT + "not_wrong_typing.fool")));
