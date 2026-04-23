@@ -195,6 +195,90 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
     }
 
     @Override
+    public Void visitNode(ClassNode n) {
+        printNode(n, n.id);
+        for (FieldNode field : n.fields) {
+            visit(field);
+        }
+        for (MethodNode method : n.methods) {
+            visit(method);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitNode(FieldNode n) {
+        printNode(n, n.id);
+        visit(n.getType());
+        return null;
+    }
+
+    @Override
+    public Void visitNode(MethodNode n) {
+        printNode(n, n.id + " with offset " + n.offset);
+        visit(n.returnType);
+        for (ParNode par : n.pars) {
+            visit(par);
+        }
+        for (Node dec : n.decs) {
+            visit(dec);
+        }
+        visit(n.exp);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassCallNode n) {
+        printNode(n, n.refId + "." + n.methodId + " at nestinglevel " + n.nl);
+        visit(n.entry);
+        visit(n.methodEntry);
+        for (Node arg : n.args) {
+            visit(arg);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitNode(NewNode n) {
+        printNode(n, n.id + " at nestinglevel " + n.nl);
+        visit(n.entry);
+        for (Node arg : n.args) {
+            visit(arg);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitNode(EmptyNode n) {
+        printNode(n);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassTypeNode n) {
+        printNode(n);
+        for (Node field : n.fields) {
+            visit(field);
+        }
+        for (Node method : n.methods) {
+            visit(method);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitNode(RefTypeNode n) {
+        printNode(n, n.classId);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(EmptyTypeNode n) {
+        printNode(n);
+        return null;
+    }
+
+    @Override
     public Void visitSTentry(STentry entry) {
         printSTentry("nestlev " + entry.nl);
         printSTentry("type");

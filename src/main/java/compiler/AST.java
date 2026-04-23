@@ -416,13 +416,14 @@ public class AST {
 
     public static class ClassCallNode extends Node {
         final String methodId;
-        final String classId;
+        final String refId;
         final List<Node> args;
-        STentry entry; // TODO: use when building EAST
+        STentry entry;
+        STentry methodEntry;
         int nl; // TODO: use during codegen and set previously
 
-        ClassCallNode(String classId, String methodId, List<Node> args) {
-            this.classId = classId;
+        ClassCallNode(String refId, String methodId, List<Node> args) {
+            this.refId = refId;
             this.methodId = methodId;
             this.args = Collections.unmodifiableList(args);
         }
@@ -436,7 +437,7 @@ public class AST {
     public static class NewNode extends Node {
         final String id;
         final List<Node> args;
-        STentry entry; // TODO: verify when building EAST
+        STentry entry;
         int nl; // TODO: use during codegen and set previously
 
         NewNode(String id, List<Node> args) {
@@ -473,10 +474,10 @@ public class AST {
     }
 
     public static class RefTypeNode extends TypeNode {
-        final String id;
+        final String classId;
 
-        RefTypeNode(String id) {
-            this.id = id;
+        RefTypeNode(String classId) {
+            this.classId = classId;
         }
 
         @Override

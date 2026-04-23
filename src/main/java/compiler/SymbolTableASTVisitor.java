@@ -297,7 +297,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         }
         int methodOffset = 0;
         for (MethodNode method : n.methods) {
-            method.offset = methodOffset--;
+            method.offset = methodOffset++;
             visit(method);
             // After its visit, we can get the method's type directly from the virtualTable
             allMethods.add(method.offset, (ArrowTypeNode) virtualTable.get(method.id).type);
@@ -307,8 +307,30 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         return null;
     }
 
+    @Override
     public Void visitNode(MethodNode n) {
         if (print) printNode(n);
+        Map<String, STentry> hm = symTable.get(nestingLevel);
+        List<TypeNode> parTypes = new ArrayList<>();
+        for (ParNode par : n.pars) parTypes.add(par.getType());
+        STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.returnType), n.offset);
+        if(hm.put(n.id, entry) != null) {
+            registerSTError("Method id " + n.id + " at line " + n.getLine() + " already declared");
+        }
+        Map<String, STentry> hmn = new HashMap<>();
+        int prevNLDecOffset = enterScope(hmn);
+        int parOffset = 1;
+        for (ParNode par: n.pars) {
+            if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
+                registerSTError("Par id " + par.id + " at line " + par.getLine() + " already declared");
+            }
+        }
+        for (Node dec : n.decs) {
+            visit(dec);
+        }
+        visit(n.exp);
+        exitScope(prevNLDecOffset);
+        return null;
         // TODO: put this method in the current nesting level's symbol table
         //  (which corresponds to the virtual table of its class), setting the STEntry offset as the value of the
         //  MethodNode's "offset" field. The type of this method (ArrowType) must be calculated based on its return type
@@ -317,6 +339,61 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         //  After that, enter the method's scope and visit all its declarations (parameters and inner decs).
         //  The offset of the inner declarations must be based on the value of "decOffset" (see FunNode).
         //  Finally, visit the expression of the method and exit the scope
+        // TODO: test
+    }
+
+    @Override
+    public Void visitNode(ClassCallNode n) {
+        if (print) printNode(n);
+        STentry entry = stLookup(n.refId);
+        if (entry == null) {
+            registerSTError("Reference id " + n.refId + " at line " + n.getLine() + " not declared");
+        } else {
+            if (!(entry.type instanceof RefTypeNode)) {
+                registerSTError("Id " + n.refId + " at line " + n.getLine() + " is not a reference identifier");
+            } else {
+                n.entry = entry;
+                String classId = ((RefTypeNode) entry.type).classId;
+                STentry methodEntry = classTable.get(classId).get(n.methodId);
+                if (methodEntry == null) {
+                    registerSTError("Method id " + n.methodId + " at line " + n.getLine() + " not declared");
+                } else {
+                    n.methodEntry = methodEntry;
+                    n.nl = nestingLevel;
+                }
+            }
+        }
+        for (Node arg : n.args) {
+            visit(arg);
+        }
         return null;
     }
+
+    @Override
+    public Void visitNode(NewNode n) {
+        if (!classTable.containsKey(n.id)) {
+            registerSTError("Class id " + n.id + " at line " + n.getLine() + " not declared");
+        } else {
+            // Gets the class entry from the hash map for the top-level scope (which contains all the class declarations)
+            STentry entry = symTable.getFirst().get(n.id);
+            if (entry == null) {
+                throw new IllegalStateException(
+                    "Class ID " + n.id + " is in the class table but not in the symbol table");
+            }
+            n.entry = entry;
+            n.nl = nestingLevel;
+        }
+        for (Node arg : n.args) {
+            visit(arg);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitNode(EmptyNode n) {
+        if (print) printNode(n);
+        return null;
+    }
+
+    //TODO: Write ST errors test for OO extension
 }
