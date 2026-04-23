@@ -51,9 +51,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     /**
-        Enters inner nesting level and puts the new hash map in the current Symbol Table scope.
-        @param hmn the hash map to put in the ST
-        @return the decOffset value of the previous nesting level
+     * Enters inner nesting level and puts the new hash map in the current Symbol Table scope.
+     *
+     * @param hmn the hash map to put in the ST
+     * @return the decOffset value of the previous nesting level
      */
     private int enterScope(Map<String, STentry> hmn) {
         // Creation of a new hashmap for the SymTable
@@ -65,8 +66,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     /**
-     * Exits the current scope, removing the corresponding Symbol Table map and restoring the decOffset to the
-     * previous value.
+     * Exits the current scope, removing the corresponding Symbol Table map and restoring the decOffset to the previous
+     * value.
+     *
      * @param prevNLDecOffset the decOffset value of the previous nesting level
      */
     private void exitScope(int prevNLDecOffset) {
@@ -76,6 +78,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
     /**
      * Signals a new Symbol Table error with the given message.
+     *
      * @param msg the error message
      */
     private void registerSTError(String msg) {
@@ -281,7 +284,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         Map<String, STentry> hm = symTable.get(nestingLevel);
         List<TypeNode> allFields = new ArrayList<>();
         List<ArrowTypeNode> allMethods = new ArrayList<>();
-        if(hm.put(n.id, new STentry(nestingLevel, new ClassTypeNode(allFields, allMethods), decOffset--)) != null) {
+        if (hm.put(n.id, new STentry(nestingLevel, new ClassTypeNode(allFields, allMethods), decOffset--)) != null) {
             registerSTError("Class id " + n.id + " at line " + n.getLine() + " already declared");
         }
         Map<String, STentry> virtualTable = new HashMap<>();
@@ -313,13 +316,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         List<TypeNode> parTypes = new ArrayList<>();
         for (ParNode par : n.pars) parTypes.add(par.getType());
         STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.returnType), n.offset);
-        if(hm.put(n.id, entry) != null) {
+        if (hm.put(n.id, entry) != null) {
             registerSTError("Method id " + n.id + " at line " + n.getLine() + " already declared");
         }
         Map<String, STentry> hmn = new HashMap<>();
         int prevNLDecOffset = enterScope(hmn);
         int parOffset = 1;
-        for (ParNode par: n.pars) {
+        for (ParNode par : n.pars) {
             if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
                 registerSTError("Par id " + par.id + " at line " + par.getLine() + " already declared");
             }
@@ -346,7 +349,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
                 String classId = ((RefTypeNode) entry.type).classId;
                 Map<String, STentry> virtualTable = classTable.get(classId);
                 if (virtualTable == null) {
-                    registerSTError("Class id " + classId + " of reference identifier " + n.refId + " at line " + n.getLine() + " not declared");
+                    registerSTError("Class id " + classId + " of reference identifier " + n.refId + " at line "
+                            + n.getLine() + " not declared");
                 } else {
                     STentry methodEntry = virtualTable.get(n.methodId);
                     if (methodEntry == null) {
@@ -374,7 +378,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             STentry entry = stLookup(n.id);
             if (entry == null) {
                 throw new IllegalStateException(
-                    "Class ID " + n.id + " is in the class table but not in the symbol table");
+                        "Class ID " + n.id + " is in the class table but not in the symbol table");
             }
             n.entry = entry;
             n.nl = nestingLevel;
