@@ -352,9 +352,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             if (!(entry.type instanceof RefTypeNode)) {
                 registerSTError("Id " + n.refId + " at line " + n.getLine() + " is not a reference identifier");
             } else {
-                n.entry = entry;
+                n.refEntry = entry;
                 String classId = ((RefTypeNode) entry.type).classId;
-                STentry methodEntry = classTable.get(classId).get(n.methodId);
+                Map<String, STentry> virtualTable = classTable.get(classId);
+                if (virtualTable == null) {
+                    throw new IllegalStateException("Virtual table for class id " + classId + " does not exist");
+                }
+                STentry methodEntry = virtualTable.get(n.methodId);
                 if (methodEntry == null) {
                     registerSTError("Method id " + n.methodId + " at line " + n.getLine() + " not declared");
                 } else {
@@ -374,8 +378,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         if (!classTable.containsKey(n.id)) {
             registerSTError("Class id " + n.id + " at line " + n.getLine() + " not declared");
         } else {
-            // Gets the class entry from the hash map for the top-level scope (which contains all the class declarations)
-            STentry entry = symTable.getFirst().get(n.id);
+            // Gets the class entry by performing a lookup. Reads every level for extendability
+            // (in case of nested classes in the future)
+            STentry entry = stLookup(n.id);
             if (entry == null) {
                 throw new IllegalStateException(
                     "Class ID " + n.id + " is in the class table but not in the symbol table");
