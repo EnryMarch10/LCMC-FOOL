@@ -18,4 +18,4 @@ let
         in
             print(vs.getX()) + print(vs.getY());
 in
-    main();
+    main(); /* Expected: 40 */

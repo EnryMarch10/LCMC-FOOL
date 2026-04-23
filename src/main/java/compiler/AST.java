@@ -412,12 +412,12 @@ public class AST {
     }
 
     public static class ClassCallNode extends Node {
-        final String methodId;
         final String refId;
+        final String methodId;
         final List<Node> args;
         STentry refEntry;
         STentry methodEntry;
-        int nl; // TODO: use during codegen and set previously
+        int nl;
 
         ClassCallNode(String refId, String methodId, List<Node> args) {
             this.refId = refId;
@@ -435,7 +435,7 @@ public class AST {
         final String id;
         final List<Node> args;
         STentry entry;
-        int nl; // TODO: use during codegen and set previously
+        int nl; // TODO: use during codegen
 
         NewNode(String id, List<Node> args) {
             this.id = id;

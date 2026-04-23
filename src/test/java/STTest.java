@@ -3,7 +3,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 public class STTest {
-    private static final String ST = "sample_programs/tests/st/";
+    private static final String ST = ProgramsTest.SAMPLES + "tests/st/";
+
+    @Test
+    void correctStructure() {
+        assertEquals(
+                0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "quicksort.fool")));
+        assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova1.fool")));
+        assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova2.fool")));
+        assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova3.fool")));
+        assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "vector.fool")));
+        // TODO: decomment when implementing hereditariness
+        // assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES +
+        // "bankloan.fool")));
+    }
 
     @Test
     void testMultiplyDeclaredFun() {
