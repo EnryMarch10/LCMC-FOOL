@@ -302,7 +302,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             // After its visit, we can get the method's type directly from the virtualTable
             allMethods.add(method.offset, (ArrowTypeNode) virtualTable.get(method.id).type);
         }
-        // TODO: test
         exitScope(prevNLDecOffset);
         return null;
     }
@@ -331,15 +330,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         visit(n.exp);
         exitScope(prevNLDecOffset);
         return null;
-        // TODO: put this method in the current nesting level's symbol table
-        //  (which corresponds to the virtual table of its class), setting the STEntry offset as the value of the
-        //  MethodNode's "offset" field. The type of this method (ArrowType) must be calculated based on its return type
-        //  and its parameter's types. When doing this also check that the method's ID is NOT already declared in the
-        //  virtual table, throwing the corresponding error if it is.
-        //  After that, enter the method's scope and visit all its declarations (parameters and inner decs).
-        //  The offset of the inner declarations must be based on the value of "decOffset" (see FunNode).
-        //  Finally, visit the expression of the method and exit the scope
-        // TODO: test
     }
 
     @Override
@@ -356,14 +346,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
                 String classId = ((RefTypeNode) entry.type).classId;
                 Map<String, STentry> virtualTable = classTable.get(classId);
                 if (virtualTable == null) {
-                    throw new IllegalStateException("Virtual table for class id " + classId + " does not exist");
-                }
-                STentry methodEntry = virtualTable.get(n.methodId);
-                if (methodEntry == null) {
-                    registerSTError("Method id " + n.methodId + " at line " + n.getLine() + " not declared");
+                    registerSTError("Class id " + classId + " of reference identifier " + n.refId + " at line " + n.getLine() + " not declared");
                 } else {
-                    n.methodEntry = methodEntry;
-                    n.nl = nestingLevel;
+                    STentry methodEntry = virtualTable.get(n.methodId);
+                    if (methodEntry == null) {
+                        registerSTError("Method id " + n.methodId + " at line " + n.getLine() + " not declared");
+                    } else {
+                        n.methodEntry = methodEntry;
+                        n.nl = nestingLevel;
+                    }
                 }
             }
         }
@@ -399,6 +390,4 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         if (print) printNode(n);
         return null;
     }
-
-    //TODO: Write ST errors test for OO extension
 }

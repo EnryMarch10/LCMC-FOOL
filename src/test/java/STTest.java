@@ -37,17 +37,43 @@ public class STTest {
 
     @Test
     void testMultiplyDeclaredClass() {
-        //assertEquals(1,
-        //    ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_class.fool")));
+        assertEquals(4,
+            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_class.fool")));
     }
 
     @Test
     void testMultiplyDeclaredField() {
-        // TODO: test
+        assertEquals(1,
+            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_field.fool")));
     }
 
     @Test
     void testMultiplyDeclaredMethod() {
-        // TODO: test
+        assertEquals(1,
+            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_method.fool")));
+    }
+
+    @Test
+    void testMultiplyDeclaredMethodParAndReferenceIdIsNotAReferenceType() {
+        assertEquals(3,
+            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_method_par.fool")));
+    }
+
+    @Test
+    void testUndeclaredReferenceId() {
+        assertEquals(1,
+            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_undeclared_reference_id.fool")));
+    }
+
+    @Test
+    void testUndeclaredMethod() {
+        assertEquals(2,
+            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_undeclared_method.fool")));
+    }
+
+    @Test
+    void testUndeclaredClass() {
+        assertEquals(5,
+            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_undeclared_class.fool")));
     }
 }
