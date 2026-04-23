@@ -8,19 +8,19 @@ public class STTest {
     @Test
     void testMultiplyDeclaredFun() {
         assertEquals(
-            1, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "prova1_multiply_declared_fun.fool")));
+                1, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "prova1_multiply_declared_fun.fool")));
     }
 
     @Test
     void testMultiplyDeclaredPar() {
         assertEquals(
-            1, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "prova1_multiply_declared_par.fool")));
+                1, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "prova1_multiply_declared_par.fool")));
     }
 
     @Test
     void testMultiplyDeclaredVar() {
         assertEquals(
-            1, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "prova1_multiply_declared_var.fool")));
+                1, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "prova1_multiply_declared_var.fool")));
     }
 
     @Test
@@ -36,37 +36,37 @@ public class STTest {
     @Test
     void testMultiplyDeclaredClass() {
         assertEquals(
-            4,
-            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_class.fool")));
+                4,
+                ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_class.fool")));
     }
 
     @Test
     void testMultiplyDeclaredField() {
         assertEquals(
-            1,
-            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_field.fool")));
+                1,
+                ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_field.fool")));
     }
 
     @Test
     void testMultiplyDeclaredMethod() {
         assertEquals(
-            1,
-            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_method.fool")));
+                1,
+                ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_multiply_declared_method.fool")));
     }
 
     @Test
     void testMultiplyDeclaredMethodParAndReferenceIdIsNotAReferenceType() {
         assertEquals(
-            3,
-            ProgramsTest.getSymbolTableErrors(
-                ProgramsTest.fromFile(ST + "vector_multiply_declared_method_par.fool")));
+                3,
+                ProgramsTest.getSymbolTableErrors(
+                        ProgramsTest.fromFile(ST + "vector_multiply_declared_method_par.fool")));
     }
 
     @Test
     void testUndeclaredReferenceId() {
         assertEquals(
-            1,
-            ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_undeclared_reference_id.fool")));
+                1,
+                ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ST + "vector_undeclared_reference_id.fool")));
     }
 
     @Test
