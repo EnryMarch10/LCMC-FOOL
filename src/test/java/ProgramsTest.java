@@ -20,11 +20,11 @@ import svm.SVMLexer;
 import svm.SVMParser;
 
 class ProgramsTest {
+    public static final String SAMPLES = "sample_programs/";
+
     public static CharStream fromFile(String fileName) {
         AtomicReference<CharStream> chars = new AtomicReference<>();
-        assertDoesNotThrow(() -> {
-            chars.set(CharStreams.fromFileName(fileName));
-        });
+        assertDoesNotThrow(() -> chars.set(CharStreams.fromFileName(fileName)));
         return chars.get();
     }
 
@@ -204,7 +204,7 @@ class ProgramsTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"prova1, 10", "prova2, 7", "prova3, 8"})
+    @CsvSource({"prova1, 10", "prova2, 7", "prova3, 8"}) // "quicksort, 122345", "vector, 40", "bankloan, 50000"
     protected void testPrograms(String fileName, String result) {
         fileName = "sample_programs/" + fileName + ".fool";
         testResultFromFile(fileName, result);

@@ -18,9 +18,6 @@ public class AST {
         final List<DecNode> declist;
         final Node exp;
 
-        // TODO: distinguish between normal declarations and class declarations?
-        //  In that case, create a second field List<ClassDecNode> classDecList with class declarations
-        //  (and remember to change the visit of ProgLetInContext to put class declarations in the new field)
         ProgLetInNode(List<DecNode> d, Node e) {
             declist = Collections.unmodifiableList(d);
             exp = e;
@@ -398,6 +395,7 @@ public class AST {
         final List<ParNode> pars;
         final List<DecNode> decs;
         final Node exp;
+        int offset;
 
         MethodNode(String id, TypeNode returnType, List<ParNode> pars, List<DecNode> decs, Node exp) {
             this.id = id;
@@ -414,14 +412,15 @@ public class AST {
     }
 
     public static class ClassCallNode extends Node {
+        final String refId;
         final String methodId;
-        final String classId;
         final List<Node> args;
-        STentry entry; // TODO: use when building EAST
-        int nl; // TODO: use during codegen and set previously
+        STentry refEntry;
+        STentry methodEntry;
+        int nl;
 
-        ClassCallNode(String classId, String methodId, List<Node> args) {
-            this.classId = classId;
+        ClassCallNode(String refId, String methodId, List<Node> args) {
+            this.refId = refId;
             this.methodId = methodId;
             this.args = Collections.unmodifiableList(args);
         }
@@ -435,8 +434,8 @@ public class AST {
     public static class NewNode extends Node {
         final String id;
         final List<Node> args;
-        STentry entry; // TODO: verify when building EAST
-        int nl; // TODO: use during codegen and set previously
+        STentry entry;
+        int nl;
 
         NewNode(String id, List<Node> args) {
             this.id = id;

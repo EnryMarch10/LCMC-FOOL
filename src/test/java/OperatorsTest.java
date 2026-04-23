@@ -8,7 +8,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 @Execution(ExecutionMode.SAME_THREAD)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class OperatorsTest {
-    private static final String OPS = "sample_programs/tests/ops/";
+    private static final String OPS = ProgramsTest.SAMPLES + "tests/ops/";
     private static final String OPS_LE_OR_DIV_EQ = OPS + "le-or-div-not/";
     private static final String OPS_GE_AND_MINUS_NOT = OPS + "ge-and-minus-not/";
 

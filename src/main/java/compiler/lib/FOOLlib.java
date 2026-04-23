@@ -18,6 +18,16 @@ public class FOOLlib {
     }
 
     /**
+     * Extracts name from {@code TypeNode} class.
+     *
+     * @param s is in the form {@code compiler.AST$NameTypeNode}.
+     * @return Extracts {@code Name} from {@code compiler.AST$NameTypeNode}.
+     */
+    public static String extractTypeNodeName(String s) { // s is in the form compiler.AST$NameTypeNode
+        return s.substring(s.lastIndexOf('$') + 1, s.length() - 8);
+    }
+
+    /**
      * Extracts name from {@code Context} class.
      *
      * @param s is in the form {@code compiler.FOOLParser$NameContext}.

@@ -1,5 +1,7 @@
 package compiler;
 
+import static compiler.lib.FOOLlib.extractNodeName;
+
 import compiler.AST.*;
 import compiler.exc.VoidException;
 import compiler.lib.BaseEASTVisitor;
@@ -30,7 +32,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
     @Override
     public Void visitNode(FunNode n) {
         printNode(n, n.id);
-        visit(n.retType);
+        visit(n.retType, "return type: ");
         for (ParNode par : n.parlist) visit(par);
         for (Node dec : n.declist) visit(dec);
         visit(n.exp);
@@ -190,6 +192,73 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
 
     @Override
     public Void visitNode(IntTypeNode n) {
+        printNode(n);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassNode n) {
+        printNode(n, n.id);
+        n.fields.forEach(this::visit);
+        n.methods.forEach(this::visit);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(FieldNode n) {
+        printNode(n, n.id + " of type " + extractNodeName(n.getType().getClass().getName()));
+        return null;
+    }
+
+    @Override
+    public Void visitNode(MethodNode n) {
+        printNode(n, n.id + "()");
+        visit(n.returnType, "return type: ");
+        n.pars.forEach(this::visit);
+        n.decs.forEach(this::visit);
+        visit(n.exp);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassCallNode n) {
+        printNode(n, n.refId + "." + n.methodId + "()");
+        visit(n.refEntry);
+        visit(n.methodEntry);
+        n.args.forEach(this::visit);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(NewNode n) {
+        printNode(n, n.id);
+        visit(n.entry);
+        n.args.forEach(this::visit);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(EmptyNode n) {
+        printNode(n);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassTypeNode n) {
+        printNode(n);
+        n.fields.forEach(this::visit);
+        n.methods.forEach(this::visit);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(RefTypeNode n) {
+        printNode(n, n.id);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(EmptyTypeNode n) {
         printNode(n);
         return null;
     }
