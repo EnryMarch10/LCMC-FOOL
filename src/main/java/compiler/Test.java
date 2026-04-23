@@ -22,7 +22,7 @@ public class Test {
             System.err.println("ERROR: Fool program directory must be passed as input");
             System.exit(1);
         }
-        String fileName = "sample_programs/" + args[0];
+        String fileName = args[0];
 
         CharStream chars = CharStreams.fromFileName(fileName);
         FOOLLexer lexer = new FOOLLexer(chars);
