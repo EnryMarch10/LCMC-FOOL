@@ -316,7 +316,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         int parOffset = 1;
         for (ParNode par : n.pars) {
             if (hashTableNested.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
-                registerSTError("Method par id " + par.id + " at line " + n.getLine() + " already declared");
+                registerSTError("Method Par id " + par.id + " at line " + n.getLine() + " already declared");
             }
         }
         for (Node dec : n.decs) visit(dec);
@@ -333,6 +333,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             registerSTError("Reference id " + n.refId + " at line " + n.getLine() + " not declared");
         } else {
             if (refEntry.type instanceof RefTypeNode refType) {
+                n.refEntry = refEntry;
                 var virtualTable = classTable.get(refType.classId);
                 if (virtualTable == null) {
                     registerSTError("Class id " + refType.classId + " of reference identifier " + n.refId + " at line "
@@ -340,17 +341,16 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
                 } else {
                     var methodEntry = virtualTable.get(n.methodId);
                     if (methodEntry == null) {
-                        registerSTError("Method id " + n.refId + "." + n.methodId + "() at line " + n.getLine()
-                                + " not declared");
+                        registerSTError("Method id " + n.methodId + "() at line " + n.getLine()
+                                + " not declared for class " + refType.classId);
                     } else {
-                        n.refEntry = refEntry;
                         n.methodEntry = methodEntry;
                         n.nl = nestingLevel;
                     }
                     for (Node arg : n.args) visit(arg);
                 }
             } else {
-                registerSTError("Reference id " + n.refId + " at line " + n.getLine() + " not declared as a class");
+                registerSTError("Id " + n.refId + " at line " + n.getLine() + " is not a reference identifier");
             }
         }
         return null;
