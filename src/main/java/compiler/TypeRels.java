@@ -1,7 +1,5 @@
 package compiler;
 
-import compiler.AST.BoolTypeNode;
-import compiler.AST.IntTypeNode;
 import compiler.lib.TypeNode;
 
 /**
@@ -14,11 +12,16 @@ public class TypeRels {
     /**
      * Evaluates if {@code a} is subtype of {@code b}.
      *
-     * @param a First base type ({@link IntTypeNode} or {@link BoolTypeNode}).
-     * @param b Second base type ({@link IntTypeNode} or {@link BoolTypeNode}).
+     * @param a First base type.
+     * @param b Second base type.
      * @return If {@code a} is subtype of {@code b}.
      */
     public static boolean isSubtype(TypeNode a, TypeNode b) {
-        return a.getClass().equals(b.getClass()) || ((a instanceof BoolTypeNode) && (b instanceof IntTypeNode));
+        if ((a instanceof AST.RefTypeNode aRefType) && (b instanceof AST.RefTypeNode bRefType)) {
+            return aRefType.classId.equals(bRefType.classId);
+        }
+        return a.getClass().equals(b.getClass())
+                || ((a instanceof AST.BoolTypeNode) && (b instanceof AST.IntTypeNode))
+                || ((a instanceof AST.EmptyTypeNode) && (b instanceof AST.RefTypeNode));
     }
 }
