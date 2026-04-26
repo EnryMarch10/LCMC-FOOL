@@ -3,7 +3,7 @@ let
         fun getX:int() x;
         fun getY:int() y;
         fun sum:Vector(other:Vector)
-            if (other == null) then {
+            if (other >= null) then { /* wrong operator with classes */
                 null
             } else {
                 new Vector(x + other.getX(), y + other.getY())
@@ -14,8 +14,8 @@ let
         let
             var v1:Vector = new Vector(10, 20);
             var v2:Vector = new Vector(4, 6);
-            var vs: Vector = v1.sum(v2, 10); /* wrong arg num method call */
+            var vs: Vector = v1.sum(v2);
         in
-            print(vs.getX()) + print(vs.getY());
+            print(v1 <= v1); /* wrong operator with classes */
 in
     main();

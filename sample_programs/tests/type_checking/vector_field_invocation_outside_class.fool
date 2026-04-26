@@ -16,6 +16,6 @@ let
             var v2:Vector = new Vector(4, 6);
             var vs: Vector = v1.sum(v2);
         in
-            print(vs.x()) + print(vs.getY());
+            print(vs.x()) + print(vs.getY()); /* wrong field invocation outside class */
 in
-    main(); /* Expected: 40 */
+    main();

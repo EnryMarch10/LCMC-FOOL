@@ -19,8 +19,8 @@ let
             var v1:Vector = new Vector(10, 20);
             var v2:Vector = new Vector(4, 6);
             var a:A = new A();
-            var vs: Vector = v1.sum(a);
+            var vs: Vector = v1.sum(a); /* wrong arg type method call */
         in
             print(vs.getX()) + print(vs.getY());
 in
-    main(); /* Expected: 40 */
+    main();

@@ -6,14 +6,14 @@ public class STTest {
     private static final String ST = ProgramsTest.SAMPLES + "tests/st/";
 
     @Test
-    void correctStructure() {
+    void testCorrectStructure() {
         assertEquals(
                 0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "quicksort.fool")));
         assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova1.fool")));
         assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova2.fool")));
         assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova3.fool")));
         assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "vector.fool")));
-        // TODO: decomment when implementing hereditariness
+        // TODO: uncomment when implementing hereditariness
         // assertEquals(0, ProgramsTest.getSymbolTableErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES +
         // "bankloan.fool")));
     }

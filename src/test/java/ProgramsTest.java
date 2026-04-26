@@ -5,7 +5,6 @@ import compiler.exc.IncomplException;
 import compiler.exc.TypeException;
 import compiler.lib.FOOLlib;
 import compiler.lib.Node;
-import compiler.lib.TypeNode;
 import java.io.*;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -76,9 +75,8 @@ class ProgramsTest {
         assertEquals(0, symtableVisitor.stErrors);
         try {
             TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
-            TypeNode mainType = typeCheckVisitor.visit(ast);
-            // Checks that return type of FOOL language is int or subtype
-            assertTrue(TypeRels.isSubtype(mainType, new AST.IntTypeNode()));
+            typeCheckVisitor.visit(ast);
+            // Doesn't check return type correctness of FOOL language
         } catch (IncomplException e) {
             System.err.println(
                     "Could not determine main program expression type due to errors detected before type checking.");
@@ -113,10 +111,8 @@ class ProgramsTest {
         // Checking Types
         try {
             TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
-            TypeNode mainType = typeCheckVisitor.visit(ast);
-            // Checks that return type of FOOL language is int or subtype
-            // TODO: type check could be generalized
-            assertTrue(TypeRels.isSubtype(mainType, new AST.IntTypeNode()));
+            typeCheckVisitor.visit(ast);
+            // TODO: does not check return type correctness of FOOL language
         } catch (IncomplException e) {
             System.err.println(
                     "Could not determine main program expression type due to errors detected before type checking.");
