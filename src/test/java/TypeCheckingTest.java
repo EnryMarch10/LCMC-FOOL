@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 public class TypeCheckingTest {
-    private static final String TYPE_CHECKING = ProgramsTest.SAMPLES + "tests/type_checking/";
+    private static final String TYPE_CHECKING = ProgramsTest.SAMPLES + "tests/object_orientation/type_checking/";
 
     @Test
     void testCorrectStructure() {
