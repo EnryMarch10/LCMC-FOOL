@@ -300,7 +300,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     public TypeNode visitNode(NewNode n) throws TypeException {
         if (print) printNode(n, n.id);
         TypeNode t = visit(n.entry);
-        // TODO: keep this check?
         if (!(t instanceof ClassTypeNode classType))
             throw new TypeException("Instantiation of a non-class " + n.id, n.getLine());
         if (classType.fields.size() != n.args.size())
@@ -309,7 +308,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         for (int i = 0; i < n.args.size(); i++) {
             if (!isSubtype(visit(n.args.get(i)), classType.fields.get(i)))
                 throw new TypeException(
-                        "Wrong type for " + (i + 1) + "-th parameter in the invocation of the constructor of " + n.id,
+                        "Wrong type for " + (i + 1) + "-th argument in the invocation of the constructor of " + n.id,
                         n.getLine());
         }
         return new RefTypeNode(n.id);
@@ -393,7 +392,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     // STentry (returns type field)
 
     /**
-     * Visits the Simble Table Entry and retrieves its type field.
+     * Visits the Symbol Table Entry and retrieves its type field.
      *
      * @param entry the Symbol Table Entry.
      * @return the type contained in the {@link STentry}.

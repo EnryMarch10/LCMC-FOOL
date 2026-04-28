@@ -23,13 +23,12 @@ public class TypeRels {
      * @return Whether {@code a} is subtype of {@code b}.
      */
     public static boolean isSubtype(TypeNode a, TypeNode b) {
-        // TODO: we suppose that EmptyTypeNode is a subtype of itself (null is subtype of null)
-        //  If this is not true, in the first condition we need to check whether "a" is an IntTypeNode OR a BoolTypeNode
+        // We suppose that EmptyTypeNode is a subtype of itself (null is subtype of null)
         return (!(a instanceof RefTypeNode) && a.getClass().equals(b.getClass()))
                 || ((a instanceof BoolTypeNode) && (b instanceof IntTypeNode))
                 || ((a instanceof EmptyTypeNode) && (b instanceof RefTypeNode))
-                // TODO: This check assumes that, if "a" and "b" are both RefTypeNode with the same class ID, then "a"
-                //  is a subtype of "b" (Vector is a subtype of Vector).
+                // This check assumes that, if "a" and "b" are both RefTypeNode with the same class ID, then "a"
+                // is a subtype of "b" (Vector is a subtype of Vector).
                 || (((a instanceof RefTypeNode refA) && (b instanceof RefTypeNode refB))
                         && refA.classId.equals(refB.classId));
     }
