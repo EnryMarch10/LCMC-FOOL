@@ -236,12 +236,15 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
             throw new TypeException("Invocation of a non-function " + n.id, n.getLine());
         }
         if (arrowType.parlist.size() != n.arglist.size()) {
-            throw new TypeException("Wrong number of parameters in the invocation of " + n.id, n.getLine());
+            throw new TypeException(
+                    "Wrong number of arguments (" + arrowType.parlist.size() + " expected, but " + n.arglist.size()
+                            + " were given) in the invocation of " + n.id + "()",
+                    n.getLine());
         }
         for (int i = 0; i < n.arglist.size(); i++) {
             if (!(isSubtype(visit(n.arglist.get(i)), arrowType.parlist.get(i)))) {
                 throw new TypeException(
-                        "Wrong type for " + (i + 1) + "-th parameter in the invocation of " + n.id, n.getLine());
+                        "Wrong type for " + (i + 1) + "-th parameter in the invocation of " + n.id + "()", n.getLine());
             }
         }
         return arrowType.ret;
@@ -377,14 +380,16 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         }
         if (arrowType.parlist.size() != n.args.size()) {
             throw new TypeException(
-                    "Wrong number of parameters (" + arrowType.parlist.size() + " expected, but " + n.args.size()
-                            + " were given) in the invocation of " + n.methodId,
+                    "Wrong number of arguments (" + arrowType.parlist.size() + " expected, but " + n.args.size()
+                            + " were given) in the invocation of " + n.refId + "." + n.methodId + "()",
                     n.getLine());
         }
         for (int i = 0; i < n.args.size(); i++) {
             if (!(isSubtype(visit(n.args.get(i)), arrowType.parlist.get(i)))) {
                 throw new TypeException(
-                        "Wrong type for " + (i + 1) + "-th parameter in the invocation of " + n.methodId, n.getLine());
+                        "Wrong type for " + (i + 1) + "-th parameter in the invocation of " + n.refId + "." + n.methodId
+                                + "()",
+                        n.getLine());
             }
         }
         return arrowType.ret;
@@ -421,12 +426,14 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(ClassTypeNode n) throws TypeException {
         if (print) printNode(n);
+        for (Node field : n.fields) visit(field);
+        for (Node method : n.methods) visit(method);
         return null;
     }
 
     @Override
     public TypeNode visitNode(RefTypeNode n) throws TypeException {
-        if (print) printNode(n);
+        if (print) printNode(n, n.classId);
         return null;
     }
 
