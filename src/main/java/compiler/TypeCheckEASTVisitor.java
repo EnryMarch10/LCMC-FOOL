@@ -81,8 +81,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
                 System.out.println("Type checking error in a declaration: " + e.text);
             }
         }
-        if (!isSubtype(visit(n.exp), ckvisit(n.retType)))
+        if (!isSubtype(visit(n.exp), ckvisit(n.retType))) {
             throw new TypeException("Wrong return type for function " + n.id, n.getLine());
+        }
         return null;
     }
 
@@ -96,8 +97,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(VarNode n) throws TypeException {
         if (print) printNode(n, n.id);
-        if (!isSubtype(visit(n.exp), ckvisit(n.getType())))
+        if (!isSubtype(visit(n.exp), ckvisit(n.getType()))) {
             throw new TypeException("Incompatible value for variable " + n.id, n.getLine());
+        }
         return null;
     }
 
@@ -110,8 +112,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(IfNode n) throws TypeException {
         if (print) printNode(n);
-        if (!(isSubtype(visit(n.cond), new BoolTypeNode())))
+        if (!(isSubtype(visit(n.cond), new BoolTypeNode()))) {
             throw new TypeException("Non boolean condition in if", n.getLine());
+        }
         TypeNode t = visit(n.th);
         TypeNode e = visit(n.el);
         if (isSubtype(t, e)) return e;
@@ -124,6 +127,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (print) printNode(n);
         TypeNode l = visit(n.left);
         TypeNode r = visit(n.right);
+        // With classes, do not check that l and r are subtypes of Integer (assuming == between objects exists)
         if (!(isSubtype(l, r) || isSubtype(r, l))) throw new TypeException("Incompatible types in equal", n.getLine());
         return new BoolTypeNode();
     }
@@ -133,6 +137,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (print) printNode(n);
         TypeNode l = visit(n.left);
         TypeNode r = visit(n.right);
+        // With classes, also checks that l and r are subtypes of Integer
         if (!((isSubtype(l, r) || isSubtype(r, l)) && isSubtype(l, new IntTypeNode()))) {
             throw new TypeException("Incompatible types in greater equal", n.getLine());
         }
@@ -144,6 +149,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (print) printNode(n);
         TypeNode l = visit(n.left);
         TypeNode r = visit(n.right);
+        // With classes, also checks that l and r are subtypes of Integer
         if (!((isSubtype(l, r) || isSubtype(r, l)) && isSubtype(l, new IntTypeNode()))) {
             throw new TypeException("Incompatible types in less equal", n.getLine());
         }
@@ -180,58 +186,71 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(TimesNode n) throws TypeException {
         if (print) printNode(n);
-        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode()))) {
             throw new TypeException("Non integers in multiplication", n.getLine());
+        }
         return new IntTypeNode();
     }
 
     @Override
     public TypeNode visitNode(DivNode n) throws TypeException {
         if (print) printNode(n);
-        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode()))) {
             throw new TypeException("Non integers in division", n.getLine());
+        }
         return new IntTypeNode();
     }
 
     @Override
     public TypeNode visitNode(PlusNode n) throws TypeException {
         if (print) printNode(n);
-        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode()))) {
             throw new TypeException("Non integers in sum", n.getLine());
+        }
         return new IntTypeNode();
     }
 
     @Override
     public TypeNode visitNode(MinusNode n) throws TypeException {
         if (print) printNode(n);
-        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode())))
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) && isSubtype(visit(n.right), new IntTypeNode()))) {
             throw new TypeException("Non integers in subtraction", n.getLine());
+        }
         return new IntTypeNode();
     }
 
     @Override
     public TypeNode visitNode(CallNode n) throws TypeException {
         if (print) printNode(n, n.id);
-        TypeNode t = visit(n.entry);
-        if (!(t instanceof ArrowTypeNode)) throw new TypeException("Invocation of a non-function " + n.id, n.getLine());
-        ArrowTypeNode at = (ArrowTypeNode) t;
-        if (!(at.parlist.size() == n.arglist.size()))
-            throw new TypeException("Wrong number of parameters in the invocation of " + n.id + "()", n.getLine());
-        for (int i = 0; i < n.arglist.size(); i++) {
-            if (!(isSubtype(visit(n.arglist.get(i)), at.parlist.get(i))))
-                throw new TypeException(
-                        "Wrong type for " + (i + 1) + "-th parameter in the invocation of " + n.id + "()", n.getLine());
+        TypeNode type = visit(n.entry);
+        if (!(type instanceof ArrowTypeNode arrowType)) {
+            throw new TypeException("Invocation of a non-function " + n.id, n.getLine());
         }
-        return at.ret;
+        if (arrowType.parlist.size() != n.arglist.size()) {
+            throw new TypeException(
+                    "Wrong number of arguments (" + arrowType.parlist.size() + " expected, but " + n.arglist.size()
+                            + " were given) in the invocation of " + n.id + "()",
+                    n.getLine());
+        }
+        for (int i = 0; i < n.arglist.size(); i++) {
+            if (!(isSubtype(visit(n.arglist.get(i)), arrowType.parlist.get(i)))) {
+                throw new TypeException(
+                        "Wrong type for " + (i + 1) + "-th argument in the invocation of " + n.id + "()", n.getLine());
+            }
+        }
+        return arrowType.ret;
     }
 
     @Override
     public TypeNode visitNode(IdNode n) throws TypeException {
         if (print) printNode(n, n.id);
         TypeNode t = visit(n.entry);
-        if (t instanceof ArrowTypeNode)
+        if (t instanceof ArrowTypeNode) {
             throw new TypeException("Wrong usage of function identifier " + n.id, n.getLine());
-        if (t instanceof ClassTypeNode) throw new TypeException("Wrong usage of class identifier " + n.id, n.getLine());
+        }
+        if (t instanceof ClassTypeNode) {
+            throw new TypeException("Wrong usage of class identifier " + n.id, n.getLine());
+        }
         return t;
     }
 
@@ -248,9 +267,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     }
 
     @Override
-    public TypeNode visitNode(ClassNode n) {
-        if (print) printNode(n);
-        for (MethodNode method : n.methods) {
+    public TypeNode visitNode(ClassNode n) throws TypeException {
+        if (print) printNode(n, n.id);
+        // When implementing hereditariness: contravariance fields type AND covariance return type
+        for (Node method : n.methods) {
             try {
                 visit(method);
             } catch (IncomplException e) {
@@ -264,6 +284,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(MethodNode n) throws TypeException {
         if (print) printNode(n, n.id);
+        // When implementing hereditariness: contravariance arguments type
         for (Node dec : n.decs) {
             try {
                 visit(dec);
@@ -272,44 +293,60 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
                 System.out.println("Type checking error in a declaration: " + e.text);
             }
         }
-        if (!isSubtype(visit(n.exp), ckvisit(n.returnType)))
+        if (!isSubtype(visit(n.exp), ckvisit(n.returnType))) {
             throw new TypeException("Wrong return type for method " + n.id, n.getLine());
+        }
         return null;
     }
 
     @Override
     public TypeNode visitNode(ClassCallNode n) throws TypeException {
-        if (print) printNode(n, n.refId + "." + n.methodId);
+        if (print) printNode(n, n.refId + "." + n.methodId + "()");
+        // refEntry type check already done in Symbol Table Visitor! Here repeated!
+        TypeNode refType = visit(n.refEntry);
+        if (!(refType instanceof RefTypeNode)) {
+            throw new IllegalStateException("Invocation of a non-class " + n.refId);
+            // throw new TypeException("Invocation of a non-class " + n.refId, n.getLine());
+        }
         TypeNode methodType = visit(n.methodEntry);
-        if (!(methodType instanceof ArrowTypeNode arrowMethodType))
-            throw new TypeException("Invocation of a non-method " + n.methodId, n.getLine());
-        if (arrowMethodType.parlist.size() != n.args.size())
+        if (!(methodType instanceof ArrowTypeNode arrowType)) {
+            throw new TypeException("Invocation of a non-method " + n.refId, n.getLine());
+        }
+        if (arrowType.parlist.size() != n.args.size()) {
             throw new TypeException(
-                    "Wrong number of arguments in the invocation of " + n.refId + "." + n.methodId + "()", n.getLine());
+                    "Wrong number of arguments (" + arrowType.parlist.size() + " expected, but " + n.args.size()
+                            + " were given) in the invocation of " + n.refId + "." + n.methodId + "()",
+                    n.getLine());
+        }
         for (int i = 0; i < n.args.size(); i++) {
-            if (!isSubtype(visit(n.args.get(i)), arrowMethodType.parlist.get(i)))
+            if (!(isSubtype(visit(n.args.get(i)), arrowType.parlist.get(i)))) {
                 throw new TypeException(
                         "Wrong type for " + (i + 1) + "-th parameter in the invocation of " + n.refId + "." + n.methodId
                                 + "()",
                         n.getLine());
+            }
         }
-        return arrowMethodType.ret;
+        return arrowType.ret;
     }
 
     @Override
     public TypeNode visitNode(NewNode n) throws TypeException {
         if (print) printNode(n, n.id);
-        TypeNode t = visit(n.entry);
-        if (!(t instanceof ClassTypeNode classType))
+        TypeNode type = visit(n.entry);
+        if (!(type instanceof ClassTypeNode classType)) {
             throw new TypeException("Instantiation of a non-class " + n.id, n.getLine());
-        if (classType.fields.size() != n.args.size())
+        }
+        if (classType.fields.size() != n.args.size()) {
             throw new TypeException(
-                    "Wrong number of arguments in the invocation of the constructor of " + n.id, n.getLine());
+                    "Wrong number of arguments (" + classType.fields.size() + " expected, but " + n.args.size()
+                            + " were given) in the instantiation of " + n.id,
+                    n.getLine());
+        }
         for (int i = 0; i < n.args.size(); i++) {
-            if (!isSubtype(visit(n.args.get(i)), classType.fields.get(i)))
+            if (!(isSubtype(visit(n.args.get(i)), classType.fields.get(i)))) {
                 throw new TypeException(
-                        "Wrong type for " + (i + 1) + "-th argument in the invocation of the constructor of " + n.id,
-                        n.getLine());
+                        "Wrong type for " + (i + 1) + "-th argument in the instantiation of " + n.id, n.getLine());
+            }
         }
         return new RefTypeNode(n.id);
     }

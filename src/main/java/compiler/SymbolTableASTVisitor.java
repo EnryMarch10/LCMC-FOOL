@@ -332,6 +332,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         if (refEntry == null) {
             registerSTError("Reference id " + n.refId + " at line " + n.getLine() + " not declared");
         } else {
+            // refEntry type check done here, a small violation to SRP (single responsibility principle)
             if (refEntry.type instanceof RefTypeNode refType) {
                 n.refEntry = refEntry;
                 var virtualTable = classTable.get(refType.classId);
