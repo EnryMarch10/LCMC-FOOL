@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 public class STTest {
-    private static final String ST = ProgramsTest.SAMPLES + "tests/st/";
+    private static final String ST = ProgramsTest.SAMPLES + "tests/object_orientation/symbol_table/";
 
     @Test
     void testCorrectStructure() {
