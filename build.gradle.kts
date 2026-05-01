@@ -62,3 +62,25 @@ tasks.test {
     forkEvery = 1
     maxParallelForks = 1
 }
+
+// Custom tasks
+
+val deleteAsmFiles by tasks.registering(Delete::class) {
+    delete(fileTree(projectDir) {
+        include("**/*.asm")
+    })
+}
+
+tasks.named("clean") {
+    dependsOn(deleteAsmFiles)
+}
+
+tasks.named("test") {
+    dependsOn(deleteAsmFiles)
+}
+
+tasks.register("cleanAssembly") {
+    group = "build"
+    description = "Deletes all generated .asm files"
+    dependsOn(deleteAsmFiles)
+}
