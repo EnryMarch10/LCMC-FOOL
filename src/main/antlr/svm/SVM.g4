@@ -21,7 +21,7 @@ private Map<String,Integer> labelDef = new HashMap<>();
 private Map<Integer,String> labelRef = new HashMap<>();
 }
 
-/*------------------------------------------------------------------
+/*------------------------------------------------------------------*
  * PARSER RULES, with EBNF (Extended Backus-Naur Form) grammars
  *------------------------------------------------------------------*/
 
@@ -54,36 +54,44 @@ instruction:  PUSH n=INTEGER {code[i++] = PUSH; code[i++] = Integer.parseInt($n.
             | HALT {code[i++] = HALT;}
             ;
 
-/*------------------------------------------------------------------
+/*------------------------------------------------------------------*
  * LEXER RULES
  *------------------------------------------------------------------*/
 
-PUSH         : 'push';
-POP          : 'pop';
-ADD          : 'add';
-SUB          : 'sub';
-MULT         : 'mult';
-DIV          : 'div';
-STOREW       : 'sw';
-LOADW        : 'lw';
-BRANCH       : 'b';
-BRANCHEQ     : 'beq';
-BRANCHLESSEQ : 'bleq';
-JS           : 'js';
-LOADRA       : 'lra';
-STORERA      : 'sra';
-LOADTM       : 'ltm';
-STORETM      : 'stm';
-LOADFP       : 'lfp';
-STOREFP      : 'sfp';
-COPYFP       : 'cfp';
-LOADHP       : 'lhp';
-STOREHP      : 'shp';
-PRINT        : 'print';
-HALT         : 'halt';
+// Every value (instruction in code section or value/address in stack/heap) is an integer (32 bits), we call it WORD
+// REGISTERS:
+// - $ip -> istruction pointer (same as $pc, program counter)
+// - $sp -> stack pointer
+// - $hp -> heap pointer
+// - $fp -> frame pointer (control link, also used in chain as access link, reference position in ACTIVATION RECORDs, also called FRAMEs)
+// - $ra -> return address (to restore $ip linked to JS instruction)
+// - $tm -> temporary storage
+PUSH         : 'push';  // puts next WORD from code on top of the stack
+POP          : 'pop';   // gets a WORD from top of the stack
+ADD          : 'add';   // POP two WORDs, add them and PUSH the result
+SUB          : 'sub';   // POP two WORDs, subtract them and PUSH the result
+MULT         : 'mult';  // POP two WORDs, multiply them and PUSH the result
+DIV          : 'div';   // POP two WORDs, divide them and PUSH the result
+STOREW       : 'sw';    // POP a WORD as address, writes at that address popped another WORD taken with POP
+LOADW        : 'lw';    // POP a WORD as address, reads at that address popped and PUSH the read WORD
+BRANCH       : 'b';     // jumps to address in next WORD from code
+BRANCHEQ     : 'beq';   // takes next WORD from code, POP two WORDs, if popped WORDs equal does BRANCH
+BRANCHLESSEQ : 'bleq';  // takes next WORD from code, POP two WORDs, if last popped equal or less first popped does BRANCH
+JS           : 'js';    // POP a WORD as address, sets $ra to $ip and then $ip to address popped (jump to subroutine)
+LOADRA       : 'lra';   // PUSH $ra
+STORERA      : 'sra';   // POP a WORD into $ra
+LOADTM       : 'ltm';   // PUSH $tm
+STORETM      : 'stm';   // POP a WORD into $tm
+LOADFP       : 'lfp';   // PUSH $fp
+STOREFP      : 'sfp';   // POP a WORD into $fp
+COPYFP       : 'cfp';   // sets $fp to $sp
+LOADHP       : 'lhp';   // PUSH $hp
+STOREHP      : 'shp';   // POP a WORD into $hp
+PRINT        : 'print'; // prints top of the stack
+HALT         : 'halt';  // ends the execution
 
 COL: ':';
-LABEL: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')*;
+LABEL: ('a'..'z' | 'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')*;
 INTEGER: '0' | ('-')?(('1'..'9')('0'..'9')*);
 
 WHITESP: ('\t' | ' ' | '\r' | '\n')+ -> channel(HIDDEN);

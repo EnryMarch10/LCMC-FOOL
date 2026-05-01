@@ -11,12 +11,11 @@ public class ExecuteVM {
 
     // Memory layout
     private final int[] code;
-    private final int[] memory = new int[MEMSIZE]; // stack + heap
+    private final int[] memory = new int[MEMSIZE]; // stack + heap (MEMSIZE-0)
 
     // Registers
-    private int ip = 0; // instruction pointer, could have been set to PC, program counter
+    private int ip = 0; // instruction pointer
     private int sp = MEMSIZE; // stack pointer
-
     private int hp = 0; // heap pointer
     private int fp = MEMSIZE; // frame pointer
     private int ra; // return address
@@ -31,7 +30,7 @@ public class ExecuteVM {
             int bytecode = code[ip++]; // fetch
             int v1, v2;
             int address;
-            switch (bytecode) {
+            switch (bytecode) { // decode + execute
                 case SVMParser.PUSH:
                     push(code[ip++]);
                     break;
@@ -98,11 +97,11 @@ public class ExecuteVM {
                 case SVMParser.LOADTM:
                     push(tm);
                     break;
-                case SVMParser.LOADFP:
-                    push(fp);
-                    break;
                 case SVMParser.STOREFP:
                     fp = pop();
+                    break;
+                case SVMParser.LOADFP:
+                    push(fp);
                     break;
                 case SVMParser.COPYFP:
                     fp = sp;

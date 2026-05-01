@@ -28,7 +28,8 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String declCode = null;
         for (Node dec : n.declist) declCode = nlJoin(declCode, visit(dec));
         return nlJoin(
-                "push 0", // fake return address, could be any value, used for consistency
+                "push 0", // fake return address, could be any value, used for consistency (offset -2 for declarations
+                // inside a function in symbol table)
                 declCode, // generate code for declarations (allocation)
                 visit(n.exp),
                 "halt",
