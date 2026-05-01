@@ -1,0 +1,34 @@
+# MEMORY LAYOUT - basic
+
+## 1. GLOBAL ENVIRONMNENT AR layout:
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[MEMSIZE - TOP OF THE STACK]
+* fake Return Address to 0 <- $fp (set to initial value of $sp, MEMSIZE)
+* value/address first var/func declared       [offset -2]
+* value/address second var/func declared      [offset -3]
+```
+* value/address last (n-th) var/func declared [offset -(n + 1)]
+...
+[0 - BOTTOM OF THE STACK]
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+## 2. FUNCTION AR layout:
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+[MEMSIZE - TOP OF THE STACK]
+...
+* CL:address (fp) of caller AR
+* value of last (m-th) parameter              [offset m]
+```
+* value of first parameter                    [offset 1]
+* AL:address (fp) of declarations AR: <- $fp in function body
+    solves 2 problems:
+      1. convenient offset to 0,
+      2. not pointing to first parameter gives the possibility to have functions with 0 parameters
+* Return Address
+* value/address first var/func declared       [offset -2] (for a variable is a value, for a function an address)
+* value/address second var/func declared      [offset -3]
+```
+* value/address last (n-th) var/func declared [offset -(n + 1)]
+...
+[0 - BOTTOM OF THE STACK]
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
