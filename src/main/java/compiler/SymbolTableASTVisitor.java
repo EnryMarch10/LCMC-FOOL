@@ -5,10 +5,7 @@ import compiler.exc.VoidException;
 import compiler.lib.BaseASTVisitor;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class that represents a visitor of an Abstract Syntax Tree and transforms it into an Enriched Abstract Syntax Tree
@@ -32,7 +29,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     private final Map<String, Map<String, STentry>> classTable = new HashMap<>();
     private int nestingLevel = 0; // current nesting level
     private int decOffset = -2; // counter for offset of local declarations at current nesting level
-    private int prevNLDecOffset;
+    private final Stack<Integer> prevNLDecOffset = new Stack<>();
 
     public SymbolTableASTVisitor() {}
 
@@ -61,7 +58,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         nestingLevel++;
         Map<String, STentry> hashTableNested = new HashMap<>();
         symTable.add(hashTableNested);
-        prevNLDecOffset = decOffset; // stores counter for offset of declarations at previous nesting level
+        prevNLDecOffset.push(decOffset); // stores counter for offset of declarations at previous nesting level
         decOffset = -2;
         return hashTableNested;
     }
@@ -72,7 +69,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
      */
     private void exitScope() {
         symTable.remove(nestingLevel--); // removing current hashmap because exiting scope
-        decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
+        decOffset = prevNLDecOffset.pop(); // restores counter for offset of declarations at previous nesting level
     }
 
     /**
