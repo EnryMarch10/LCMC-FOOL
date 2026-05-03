@@ -1,0 +1,7 @@
+let
+    class Integer (value:int) {
+        fun getValue:int() value;
+    }
+    var num: Integer = new Integer(4);
+in
+    print(num.getValue()); /* Expected: 4 */
