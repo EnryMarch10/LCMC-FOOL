@@ -1,0 +1,33 @@
+let
+    class Vector (x:int, y:int) {
+        fun getX:int() x;
+        fun getY:int() y;
+        fun sum:Vector(other:Vector)
+            if (other == null) then {
+                null
+            } else {
+                new Vector(x + other.getX(), y + other.getY())
+            };
+    }
+
+    fun main:int()
+        let
+            var v1:Vector = new Vector(10, 20);
+            var v2:Vector = new Vector(4, 6);
+            var v3: Vector = v1;
+        in
+            print(v1 == v1) + /* Expected: 1 (true) */
+            print(v1 == v2) + /* Expected: 0 (false) */
+            print(v1 == v3);  /* Expected: 1 (true) */
+in
+    main(); /* Expected: 2; Expected print: 101 */
+
+/* TODO: test that:
+    v1 == v1 is true
+    v1 == v2 is false
+    And, with the following declarations:
+    var v1:Vector = new Vector(10, 20);
+    var v2:Vector = v1;
+    test that:
+    v1 == v1 is true
+    v1 == v2 is true */

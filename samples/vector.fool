@@ -6,7 +6,7 @@ let
             if (other == null) then {
                 null
             } else {
-                new Vector(x + other.getX(), y + other.getY())
+                new Vector(x + other.getX(), getY() + other.getY())
             };
     }
 
@@ -18,4 +18,4 @@ let
         in
             print(vs.getX()) + print(vs.getY());
 in
-    main(); /* Expected: 14 26 */
+    main(); /* Expected: 40; Expected print: 1426 */

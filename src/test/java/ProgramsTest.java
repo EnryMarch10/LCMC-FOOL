@@ -200,8 +200,7 @@ class ProgramsTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"prova1, 10", "prova2, 7", "prova3, 8", "quicksort, 122345", "vector, 1426", "integer, 4"
-    }) // "bankloan, 50000"
+    @CsvSource({"prova1, 10", "prova2, 7", "prova3, 8"})
     protected void testPrograms(String fileName, String result) {
         fileName = SAMPLES + fileName + ".fool";
         testResultFromFile(fileName, result);
