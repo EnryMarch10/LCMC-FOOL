@@ -7,6 +7,9 @@ import compiler.exc.VoidException;
 import compiler.lib.BaseASTVisitor;
 import compiler.lib.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class responsible for generating code for a Stack Virtual Machine (SVM). It targets the MIPS ISA (Microprocessor
  * without Interlocked Pipeline Stages Instruction Set Architecture), a RISC architecture.
@@ -54,17 +57,17 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String funl = freshFunLabel();
         putCode(nlJoin(
                 funl + ":",
-                "cfp", // set $fp to $sp value
-                "lra", // load $ra value
+                "cfp", // set $fp to $sp value (saving reference position in AR)
+                "lra", // push $ra on the stack
                 declCode, // generate code for local declarations (they use the new $fp!!!)
                 visit(n.exp), // generate code for function body expression
-                "stm", // set $tm to popped value (function result)
+                "stm", // set $tm to popped value (saving the function result for later)
                 popDecl, // remove local declarations from stack
-                "sra", // set $ra to popped value
+                "sra", // set $ra to popped value (storing the return address for later)
                 "pop", // remove Access Link from stack
                 popParl, // remove parameters from stack
                 "sfp", // set $fp to popped value (Control Link)
-                "ltm", // load $tm value (function result)
+                "ltm", // load $tm value (leaving the function result on the stack)
                 "lra", // load $ra value
                 "js" // jump to popped address
                 ));
@@ -284,5 +287,61 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     public String visitNode(IntNode n) {
         if (print) printNode(n, n.val.toString());
         return "push " + n.val;
+    }
+
+    public String visitNode(ClassNode n) {
+        if (print) printNode(n, n.id);
+        List<String> dispatchTable = new ArrayList<>();
+        for (MethodNode method : n.methods) {
+            visit(method);
+            dispatchTable.add(method.offset, method.label);
+        }
+        String dispatchTableAllocation = null;
+        for (String label : dispatchTable) {
+            // Saves the label in the heap and increments $hp
+            dispatchTableAllocation = nlJoin(
+                dispatchTableAllocation,
+                "push " + label, // pushes the label on the stack
+                "lhp", // loads the current $hp value
+                "sw", // saves the pushed label in the heap (at address $hp)
+                "lhp", // loads the current $hp value
+                "push 1", // pushes increment value
+                "add", // increments the current value of $hp on the stack
+                "shp" // modifies $hp according to the new value
+                );
+        }
+        return nlJoin(  // TODO: verify that the return value is correct
+            "lhp", // saves dispatch pointer on the stack (pointing to the bottom of the dispatch table)
+            dispatchTableAllocation
+        );
+    }
+
+    @Override
+    public String visitNode(MethodNode n) {
+        if (print) printNode(n, n.id);
+        n.label = freshFunLabel();
+        String declCode = null, popDecl = null, popParl = null;
+        for (Node dec: n.decs) {
+            declCode = nlJoin(declCode, visit(dec));
+            popDecl = nlJoin(popDecl, "pop");
+        }
+        for (Node par : n.pars) popParl = nlJoin(popParl, "pop");
+        putCode(nlJoin(
+            n.label + ":",
+            "cfp",  // set $fp to $sp value (saving reference position in AR)
+            "lra", // push $ra on the stack
+            declCode, // generate code for local declarations (they use the new $fp!!!)
+            visit(n.exp), // generate code for function body expression
+            "stm", // set $tm to popped value (saving the function result for later)
+            popDecl, // remove local declarations from stack
+            "sra", // set $ra to popped value (storing the return address for later)
+            "pop", // remove Access Link from stack
+            popParl, // remove parameters from stack
+            "sfp", // set $fp to popped value (Control Link)
+            "ltm", // load $tm value (leaving the function result on the stack)
+            "lra", // load $ra value
+            "js" // jump to popped address
+        ));
+        return null;
     }
 }
