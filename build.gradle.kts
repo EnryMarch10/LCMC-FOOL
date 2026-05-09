@@ -12,7 +12,6 @@ repositories {
     mavenCentral()
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
@@ -59,8 +58,9 @@ spotless {
 
 tasks.test {
     useJUnitPlatform()
-    forkEvery = 1
-    maxParallelForks = 1
+    inputs.files(fileTree("samples") {
+        exclude("**/*.asm")
+    })
 }
 
 // Custom tasks
@@ -71,16 +71,8 @@ val deleteAsmFiles by tasks.registering(Delete::class) {
     })
 }
 
-tasks.named("clean") {
-    dependsOn(deleteAsmFiles)
-}
-
-tasks.named("test") {
-    dependsOn(deleteAsmFiles)
-}
-
-tasks.register("cleanAssembly") {
-    group = "build"
-    description = "Deletes all generated .asm files"
-    dependsOn(deleteAsmFiles)
+tasks.register("format") {
+    group = "formatting"
+    description = "Runs Spotless"
+    dependsOn("spotlessApply")
 }
