@@ -2,11 +2,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
-@Execution(ExecutionMode.SAME_THREAD)
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class OperatorsTest {
     private static final String OPS = ProgramsTest.SAMPLES + "tests/operators/";
     private static final String OPS_LE_OR_DIV_EQ = OPS + "le-or-div-not/";
