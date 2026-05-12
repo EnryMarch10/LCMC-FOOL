@@ -243,6 +243,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     @Override
     public String visitNode(CallNode n) {
         if (print) printNode(n, n.id);
+        // TODO: Modify according to instructions
         String argCode = null, getAR = null;
         for (int i = n.arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.arglist.get(i)));
         for (int i = 0; i < n.nl - n.entry.nl; i++) getAR = nlJoin(getAR, "lw");
@@ -310,7 +311,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "shp" // modifies $hp according to the new value
                 );
         }
-        return nlJoin(  // TODO: verify that the return value is correct
+        return nlJoin(
             "lhp", // saves dispatch pointer on the stack (pointing to the bottom of the dispatch table)
             dispatchTableAllocation
         );
@@ -343,5 +344,21 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
             "js" // jump to popped address
         ));
         return null;
+    }
+
+    public String visitNode(ClassCallNode n) {
+        if (print) printNode(n);
+        return null; //TODO: Implement
+    }
+
+    public String visitNode(NewNode n) {
+        if (print) printNode(n);
+        return null; // TODO: Implement
+    }
+
+    @Override
+    public String visitNode(EmptyNode n) {
+        if (print) printNode(n);
+        return "push -1";
     }
 }
