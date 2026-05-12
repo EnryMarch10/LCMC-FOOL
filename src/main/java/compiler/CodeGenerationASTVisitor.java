@@ -385,7 +385,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 // by following the static chain (of Access Links)
                 "push " + n.refEntry.offset,
                 "add", // compute address of "object" declaration
-                "lw", // load object pointer TODO: error!! Offset is wrong here
+                "lw", // load object pointer
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (object pointer)
                 "ltm", // duplicate top of stack
@@ -418,7 +418,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return nlJoin(
                 argCode, // generate code for argument expressions
                 moveArgCode, // creates the OBJECT LAYOUT in heap
-                // TODO: rifare con nesting level? Decommentare sopra?
+                // TODO: rifare con nesting level? Decommentare sopra
                 "push " + (ExecuteVM.MEMSIZE + n.entry.offset), // class address in global environment
                 "lw", // load dispatch pointer
                 "lhp", // load $hp

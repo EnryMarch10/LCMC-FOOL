@@ -12,7 +12,7 @@ public class TypeCheckingTest {
         assertEquals(0, ProgramsTest.getTypeErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova2.fool")));
         assertEquals(0, ProgramsTest.getTypeErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "prova3.fool")));
         assertEquals(0, ProgramsTest.getTypeErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "vector.fool")));
-        // TODO: uncomment when implementing hereditariness
+        // NOTE: uncomment when implementing hereditariness
         // assertEquals(0, ProgramsTest.getTypeErrors(ProgramsTest.fromFile(ProgramsTest.SAMPLES + "bankloan.fool")));
     }
 
