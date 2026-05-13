@@ -1,12 +1,12 @@
 package compiler;
 
 import static compiler.lib.FOOLlib.*;
+import static svm.ExecuteVM.MEMSIZE;
 
 import compiler.AST.*;
 import compiler.exc.VoidException;
 import compiler.lib.BaseASTVisitor;
 import compiler.lib.Node;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -242,6 +242,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     /**
      * Generates the code for the given list of arguments, pushing them in the stack in reversed order.
+     *
      * @param arglist the list of arguments.
      * @return the generated code.
      */
@@ -252,8 +253,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     /**
-     * Generates the code for retrieving the address of the frame containing the declaration of a given ID.
-     * This is done by following the static chain of access links, starting from the current AR.
+     * Generates the code for retrieving the address of the frame containing the declaration of a given ID. This is done
+     * by following the static chain of access links, starting from the current AR.
+     *
      * @param usageNl the nesting level of the ID's usage.
      * @param entryNl the nesting level of the ID's declaration.
      * @return the generated code.
@@ -267,9 +269,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     @Override
     public String visitNode(CallNode n) {
         if (print) printNode(n, n.id);
-        // TODO: Modify according to instructions
-        //String argCode = null; TODO: remove
-        //for (int i = n.arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.arglist.get(i)));
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 generateArgCode(n.arglist), // generate code for argument expressions in reversed order
@@ -279,6 +278,8 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (pointer to frame of function "id" declaration)
                 "ltm", // duplicate top of stack
+                n.entry.offset >= 0 ? "lw" : null, // if it's a method, load the dispatch pointer by dereferencing
+                // the object pointer
                 "push " + n.entry.offset,
                 "add", // compute address of "id" declaration
                 "lw", // load address of "id" function
@@ -311,6 +312,20 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return "push " + n.val;
     }
 
+    /**
+     * Generates code for incrementing the Heap Pointer by a value of 1.
+     *
+     * @return the generated code.
+     */
+    private String incrementHp() {
+        return nlJoin(
+                "lhp", // loads the current $hp value
+                "push 1", // pushes increment value
+                "add", // increments the current value of $hp on the stack
+                "shp" // modifies $hp according to the new value
+                );
+    }
+
     public String visitNode(ClassNode n) {
         if (print) printNode(n, n.id);
         List<String> dispatchTable = new ArrayList<>();
@@ -322,20 +337,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         for (String label : dispatchTable) {
             // Saves the label in the heap and increments $hp
             dispatchTableAllocation = nlJoin(
-                dispatchTableAllocation,
-                "push " + label, // pushes the label on the stack
-                "lhp", // loads the current $hp value
-                "sw", // saves the pushed label in the heap (at address $hp)
-                "lhp", // loads the current $hp value
-                "push 1", // pushes increment value
-                "add", // increments the current value of $hp on the stack
-                "shp" // modifies $hp according to the new value
-                );
+                    dispatchTableAllocation,
+                    "push " + label, // push the label on the stack
+                    "lhp", // load the current $hp value
+                    "sw", // save the pushed label in the heap (at address $hp)
+                    incrementHp());
         }
         return nlJoin(
-            "lhp", // saves dispatch pointer on the stack (pointing to the bottom of the dispatch table)
-            dispatchTableAllocation
-        );
+                "lhp", // saves dispatch pointer on the stack (pointing to the bottom of the dispatch table)
+                dispatchTableAllocation);
     }
 
     @Override
@@ -343,59 +353,77 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n, n.id);
         n.label = freshFunLabel();
         String declCode = null, popDecl = null, popParl = null;
-        for (Node dec: n.decs) {
+        for (Node dec : n.decs) {
             declCode = nlJoin(declCode, visit(dec));
             popDecl = nlJoin(popDecl, "pop");
         }
         for (Node par : n.pars) popParl = nlJoin(popParl, "pop");
         putCode(nlJoin(
-            n.label + ":",
-            "cfp",  // set $fp to $sp value (saving reference position in AR)
-            "lra", // push $ra on the stack
-            declCode, // generate code for local declarations (they use the new $fp!!!)
-            visit(n.exp), // generate code for function body expression
-            "stm", // set $tm to popped value (saving the function result for later)
-            popDecl, // remove local declarations from stack
-            "sra", // set $ra to popped value (storing the return address for later)
-            "pop", // remove Access Link from stack
-            popParl, // remove parameters from stack
-            "sfp", // set $fp to popped value (Control Link)
-            "ltm", // load $tm value (leaving the function result on the stack)
-            "lra", // load $ra value
-            "js" // jump to popped address
-        ));
+                n.label + ":",
+                "cfp", // set $fp to $sp value (saving reference position in AR)
+                "lra", // push $ra on the stack
+                declCode, // generate code for local declarations (they use the new $fp!!!)
+                visit(n.exp), // generate code for function body expression
+                "stm", // set $tm to popped value (saving the function result for later)
+                popDecl, // remove local declarations from stack
+                "sra", // set $ra to popped value (storing the return address for later)
+                "pop", // remove Access Link from stack
+                popParl, // remove parameters from stack
+                "sfp", // set $fp to popped value (Control Link)
+                "ltm", // load $tm value (leaving the function result on the stack)
+                "lra", // load $ra value
+                "js" // jump to popped address
+                ));
         return null;
     }
 
     public String visitNode(ClassCallNode n) {
         if (print) printNode(n);
         return nlJoin(
-            "lfp", // load Control Link (pointer to frame of function "id" caller)
-            generateArgCode(n.args), // generate code for the method call's arguments
-            "lfp", // load the address of the current frame's Access Link
-            getDeclarationAR(n.nl, n.refEntry.nl), // retrieve the access of the frame containing the reference ID's
-            // declaration
-            "push " + n.refEntry.offset, // push the reference ID's offset on the stack
-            "add", // compute the address of reference ID's declaration
-            "lw", // load the reference ID's object pointer on the stack. This will be the value of the method's AL.
-            // This makes it impossible to access IDs that are declared in the global scope, since the AL chain of a
-            // method ends with the dispatch pointer of its class. This is fine, however, since FOOL's syntax only
-            // allows to declare classes at the top of the scope, so it will never be possible to declare a function
-            // or a variable before a class.
-            "stm", // set $tm to popped value (with the aim of duplicating top of stack)
-            "ltm", // load Access Link (object pointer)
-            "ltm", // duplicate the top of the stack
-            "lw", // load dispatch pointer on the stack (by dereferencing the object pointer)
-            "push " + n.methodEntry.offset, // push the method's offset
-            "add", // compute the method's position in the dispatch table
-            "lw", // loads the method's address
-            "js" // jump to popped address
-        );
+                "lfp", // load Control Link (pointer to frame of function "id" caller)
+                generateArgCode(n.args), // generate code for the method call's arguments
+                "lfp", // load the address of the current frame's Access Link
+                getDeclarationAR(n.nl, n.refEntry.nl), // retrieve the access of the frame containing the reference ID's
+                // declaration
+                "push " + n.refEntry.offset, // push the reference ID's offset on the stack
+                "add", // compute the address of reference ID's declaration
+                "lw", // load the reference ID's object pointer on the stack. This will be the value of the method's AL.
+                // This makes it impossible to access IDs that are declared in the global scope, since the AL chain of a
+                // method ends with the dispatch pointer of its class. This is fine, however, since FOOL's syntax only
+                // allows to declare classes at the top of the scope, so it will never be possible to declare a function
+                // or a variable before a class.
+                "stm", // set $tm to popped value (with the aim of duplicating top of stack)
+                "ltm", // load Access Link (object pointer)
+                "ltm", // duplicate the top of the stack
+                "lw", // load dispatch pointer on the stack (by dereferencing the object pointer)
+                "push " + n.methodEntry.offset, // push the method's offset
+                "add", // compute the method's position in the dispatch table
+                "lw", // loads the method's address
+                "js" // jump to popped address
+                );
     }
 
     public String visitNode(NewNode n) {
         if (print) printNode(n);
-        return null; // TODO: Implement
+        String loadArgs = null;
+        String allocateArgs = null;
+        for (int i = 0; i < n.args.size(); i++) {
+            loadArgs = nlJoin(loadArgs, visit(n.args.get(i)));
+            allocateArgs = nlJoin(
+                    allocateArgs,
+                    "lhp",
+                    "sw", // save the argument at the top of the heap
+                    incrementHp());
+        }
+        return nlJoin(
+                loadArgs, // load the arguments on the stack
+                allocateArgs, // allocate each argument on the heap (in reverse order)
+                "push " + (Integer) (MEMSIZE + n.entry.offset), // load address of the class's dispatch pointer
+                "lw", // load dispatch pointer on the stack
+                "lhp",
+                "sw", // save dispatch pointer on the heap
+                "lhp", // put object pointer on the stack
+                incrementHp());
     }
 
     @Override
