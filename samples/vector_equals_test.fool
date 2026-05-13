@@ -21,13 +21,3 @@ let
             print(v1 == v3);  /* Expected: 1 (true) */
 in
     main(); /* Expected: 2; Expected print: 101 */
-
-/* TODO: test that:
-    v1 == v1 is true
-    v1 == v2 is false
-    And, with the following declarations:
-    var v1:Vector = new Vector(10, 20);
-    var v2:Vector = v1;
-    test that:
-    v1 == v1 is true
-    v1 == v2 is true */

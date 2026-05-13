@@ -356,6 +356,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
     @Override
     public Void visitNode(NewNode n) {
+        if (print) printNode(n);
         if (!classTable.containsKey(n.id)) {
             registerSTError("Class id " + n.id + " at line " + n.getLine() + " not declared");
         } else {

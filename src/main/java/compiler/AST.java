@@ -396,6 +396,7 @@ public class AST {
         final List<DecNode> decs;
         final Node exp;
         int offset;
+        String label;
 
         MethodNode(String id, TypeNode returnType, List<ParNode> pars, List<DecNode> decs, Node exp) {
             this.id = id;
@@ -435,7 +436,9 @@ public class AST {
         final String id;
         final List<Node> args;
         STentry entry;
-        int nl; // TODO: use during codegen
+        int nl; // TODO: is it really needed? The class's declaration is taken directly from MEMSIZE + n.entry.offset,
+        //  so this field is never accessed. However, it might be useful in case of nested classes in the
+        //  future.
 
         NewNode(String id, List<Node> args) {
             this.id = id;
