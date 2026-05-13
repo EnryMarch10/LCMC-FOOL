@@ -240,18 +240,41 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return nlJoin(visit(n.left), visit(n.right), "sub");
     }
 
+    /**
+     * Generates the code for the given list of arguments, pushing them in the stack in reversed order.
+     * @param arglist the list of arguments.
+     * @return the generated code.
+     */
+    private String generateArgCode(List<Node> arglist) {
+        String argCode = null;
+        for (int i = arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(arglist.get(i)));
+        return argCode;
+    }
+
+    /**
+     * Generates the code for retrieving the address of the frame containing the declaration of a given ID.
+     * This is done by following the static chain of access links, starting from the current AR.
+     * @param usageNl the nesting level of the ID's usage.
+     * @param entryNl the nesting level of the ID's declaration.
+     * @return the generated code.
+     */
+    private String getDeclarationAR(int usageNl, int entryNl) {
+        String getAR = null;
+        for (int i = 0; i < usageNl - entryNl; i++) getAR = nlJoin(getAR, "lw");
+        return getAR;
+    }
+
     @Override
     public String visitNode(CallNode n) {
         if (print) printNode(n, n.id);
         // TODO: Modify according to instructions
-        String argCode = null, getAR = null;
-        for (int i = n.arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.arglist.get(i)));
-        for (int i = 0; i < n.nl - n.entry.nl; i++) getAR = nlJoin(getAR, "lw");
+        //String argCode = null; TODO: remove
+        //for (int i = n.arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.arglist.get(i)));
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
-                argCode, // generate code for argument expressions in reversed order
+                generateArgCode(n.arglist), // generate code for argument expressions in reversed order
                 "lfp",
-                getAR, // retrieve address of frame containing "id" declaration
+                getDeclarationAR(n.nl, n.entry.nl), // retrieve address of frame containing "id" declaration
                 // by following the static chain (of Access Links)
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (pointer to frame of function "id" declaration)
@@ -266,11 +289,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     @Override
     public String visitNode(IdNode n) {
         if (print) printNode(n, n.id);
-        String getAR = null;
-        for (int i = 0; i < n.nl - n.entry.nl; i++) getAR = nlJoin(getAR, "lw");
         return nlJoin(
                 "lfp",
-                getAR, // retrieve address of frame containing "id" declaration
+                getDeclarationAR(n.nl, n.entry.nl), // retrieve address of frame containing "id" declaration
                 // by following the static chain (of Access Links)
                 "push " + n.entry.offset,
                 "add", // compute address of "id" declaration
@@ -348,7 +369,28 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     public String visitNode(ClassCallNode n) {
         if (print) printNode(n);
-        return null; //TODO: Implement
+        return nlJoin(
+            "lfp", // load Control Link (pointer to frame of function "id" caller)
+            generateArgCode(n.args), // generate code for the method call's arguments
+            "lfp", // load the address of the current frame's Access Link
+            getDeclarationAR(n.nl, n.refEntry.nl), // retrieve the access of the frame containing the reference ID's
+            // declaration
+            "push " + n.refEntry.offset, // push the reference ID's offset on the stack
+            "add", // compute the address of reference ID's declaration
+            "lw", // load the reference ID's object pointer on the stack. This will be the value of the method's AL.
+            // This makes it impossible to access IDs that are declared in the global scope, since the AL chain of a
+            // method ends with the dispatch pointer of its class. This is fine, however, since FOOL's syntax only
+            // allows to declare classes at the top of the scope, so it will never be possible to declare a function
+            // or a variable before a class.
+            "stm", // set $tm to popped value (with the aim of duplicating top of stack)
+            "ltm", // load Access Link (object pointer)
+            "ltm", // duplicate the top of the stack
+            "lw", // load dispatch pointer on the stack (by dereferencing the object pointer)
+            "push " + n.methodEntry.offset, // push the method's offset
+            "add", // compute the method's position in the dispatch table
+            "lw", // loads the method's address
+            "js" // jump to popped address
+        );
     }
 
     public String visitNode(NewNode n) {
