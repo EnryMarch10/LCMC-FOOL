@@ -436,9 +436,9 @@ public class AST {
         final String id;
         final List<Node> args;
         STentry entry;
-        int nl; // TODO: is it really needed? The class's declaration is taken directly from MEMSIZE + n.entry.offset,
-        //  so this field is never accessed. However, it might be useful in case of nested classes in the
-        //  future.
+        int nl; // Not used during code generation.
+        // The class's declaration is taken directly from MEMSIZE + n.entry.offset, so this field is never accessed.
+        // However, it might be useful in case of nested classes in the future.
 
         NewNode(String id, List<Node> args) {
             this.id = id;

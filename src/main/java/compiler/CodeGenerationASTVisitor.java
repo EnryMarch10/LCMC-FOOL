@@ -268,7 +268,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     @Override
     public String visitNode(CallNode n) {
-        if (print) printNode(n, n.id);
+        if (print) printNode(n, n.id + "()");
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 generateArgCode(n.arglist), // generate code for argument expressions in reversed order
@@ -378,7 +378,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     public String visitNode(ClassCallNode n) {
-        if (print) printNode(n);
+        if (print) printNode(n, n.refId + "." + n.methodId + "()");
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 generateArgCode(n.args), // generate code for the method call's arguments
@@ -418,7 +418,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return nlJoin(
                 loadArgs, // load the arguments on the stack
                 allocateArgs, // allocate each argument on the heap (in reverse order)
-                "push " + (Integer) (MEMSIZE + n.entry.offset), // load address of the class's dispatch pointer
+                "push " + (MEMSIZE + n.entry.offset), // load address of the class's dispatch pointer
                 "lw", // load dispatch pointer on the stack
                 "lhp",
                 "sw", // save dispatch pointer on the heap
