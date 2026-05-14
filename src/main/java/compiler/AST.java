@@ -436,7 +436,7 @@ public class AST {
         final String id;
         final List<Node> args;
         STentry entry;
-        int nl; // TODO: use during codegen
+        int nl; // NOTE: Not used during codegen
 
         NewNode(String id, List<Node> args) {
             this.id = id;

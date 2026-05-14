@@ -18,7 +18,6 @@ import svm.ExecuteVM;
  * This class acts as the Code Generator (4-th and last component of the Compiler).
  */
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
-    private final List<List<String>> dispatchTables = new ArrayList<>();
 
     public CodeGenerationASTVisitor() {}
 
@@ -247,36 +246,20 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String argCode = null, getAR = null;
         for (int i = n.arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.arglist.get(i)));
         for (int i = 0; i < n.nl - n.entry.nl; i++) getAR = nlJoin(getAR, "lw");
-        if (n.entry.offset < 0) {
-            return nlJoin(
-                    "lfp", // load Control Link (pointer to frame of function "id" caller)
-                    argCode, // generate code for argument expressions in reversed order
-                    "lfp",
-                    getAR, // retrieve address of frame containing "object" declaration
-                    // by following the static chain (of Access Links)
-                    "stm", // set $tm to popped value (with the aim of duplicating top of stack)
-                    "ltm", // load Access Link (pointer to frame of function "id" declaration)
-                    "ltm", // duplicate top of stack
-                    "push " + n.entry.offset,
-                    "add", // compute address of "id" declaration
-                    "lw", // load address of "id" function
-                    "js" // jump to popped address, function execution (saving address of subsequent instruction in $ra)
-                    );
-        }
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 argCode, // generate code for argument expressions in reversed order
                 "lfp",
-                getAR, // retrieve address of frame containing the object pointer
+                getAR, // retrieve address of frame containing "object" declaration
                 // by following the static chain (of Access Links)
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
-                "ltm", // load Access Link (object pointer, according to ClassCallNode implementation)
+                "ltm", // load Access Link (pointer to frame of function "id" declaration)
                 "ltm", // duplicate top of stack
-                "lw", // replaces last object pointer with dispatch pointer
+                n.entry.offset >= 0 ? "lw" : null, // if method, replaces last object pointer with dispatch pointer
                 "push " + n.entry.offset,
-                "add", // compute address of method in dispatch table
-                "lw", // load method address
-                "js" // jump to popped address, method execution (saving address of subsequent instruction in $ra)
+                "add", // compute address of "id" declaration
+                "lw", // load address of "id" function
+                "js" // jump to popped address, function execution (saving address of subsequent instruction in $ra)
                 );
     }
 
@@ -310,18 +293,16 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     @Override
     public String visitNode(ClassNode n) {
         if (print) printNode(n, n.id);
-        dispatchTables.add(n.methods.stream()
-                .map(method -> {
-                    method.label = freshFunLabel();
-                    visit(method);
-                    return method.label;
-                })
-                .toList());
+        final List<String> dispatchTable = new ArrayList<>();
+        for (var method : n.methods) {
+            visit(method);
+            dispatchTable.add(method.offset, method.label);
+        }
         // codice che alloca su heap la dispatch table della classe e lascia il dispatch pointer sullo stack
-        String allocCode = null;
-        for (String methodLabel : dispatchTables.getLast()) {
-            allocCode = nlJoin(
-                    allocCode,
+        String dispatchTableAllocation = null;
+        for (String methodLabel : dispatchTable) {
+            dispatchTableAllocation = nlJoin(
+                    dispatchTableAllocation,
                     "push " + methodLabel, // method address
                     "lhp", // load $hp
                     "sw", // writes method address at $hp
@@ -333,12 +314,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         }
         return nlJoin(
                 "lhp", // load the dispatch pointer to " + n.id + " class"
-                allocCode // creates the DISPATCH TABLE LAYOUT in heap
+                dispatchTableAllocation // creates the DISPATCH TABLE LAYOUT in heap
                 );
     }
 
     @Override
     public String visitNode(MethodNode n) {
+        if (print) printNode(n, n.id);
+        n.label = freshFunLabel();
         String declCode = null, popDecl = null, popParl = null;
         for (Node dec : n.decs) {
             declCode = nlJoin(declCode, visit(dec));
@@ -362,12 +345,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "js" // jump to popped address
                 ));
         return null;
-    }
-
-    @Override
-    public String visitNode(EmptyNode n) {
-        if (print) printNode(n);
-        return "push -1";
     }
 
     @Override
@@ -401,11 +378,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     @Override
     public String visitNode(NewNode n) {
         if (print) printNode(n, n.id);
-        String argCode = null, moveArgCode = null, getAR = null;
+        String loadArgs = null, allocateArgs = null;
         for (var arg : n.args) {
-            argCode = nlJoin(argCode, visit(arg));
-            moveArgCode = nlJoin(
-                    moveArgCode,
+            loadArgs = nlJoin(loadArgs, visit(arg));
+            allocateArgs = nlJoin(
+                    allocateArgs,
                     "lhp", // load $hp
                     "sw", // goes at $hp and writes argument value/address there (reverse order)
                     "lhp", // load $hp"
@@ -414,11 +391,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                     "shp" // updates $hp with incremented value
                     );
         }
-        // for (int i = 0; i < n.nl - n.entry.nl; i++) getAR = nlJoin(getAR, "lw");
         return nlJoin(
-                argCode, // generate code for argument expressions
-                moveArgCode, // creates the OBJECT LAYOUT in heap
-                // TODO: rifare con nesting level? Decommentare sopra
+                loadArgs, // generate code for argument expressions
+                allocateArgs, // creates the OBJECT LAYOUT in heap
+                // NOTE: Maybe could be generalized using nesting level of NewNode
                 "push " + (ExecuteVM.MEMSIZE + n.entry.offset), // class address in global environment
                 "lw", // load dispatch pointer
                 "lhp", // load $hp
@@ -429,5 +405,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "add", // increments $hp
                 "shp" // updates $hp with incremented value
                 );
+    }
+
+    @Override
+    public String visitNode(EmptyNode n) {
+        if (print) printNode(n);
+        return "push -1";
     }
 }
