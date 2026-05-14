@@ -283,7 +283,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "push " + n.entry.offset,
                 "add", // compute address of "id" declaration
                 "lw", // load address of "id" function
-                "js" // jump to popped address (saving address of subsequent instruction in $ra)
+                "js" // jump to popped address, function execution (saving address of subsequent instruction in $ra)
                 );
     }
 
@@ -328,17 +328,17 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     public String visitNode(ClassNode n) {
         if (print) printNode(n, n.id);
-        List<String> dispatchTable = new ArrayList<>();
-        for (MethodNode method : n.methods) {
+        final List<String> dispatchTable = new ArrayList<>();
+        for (var method : n.methods) {
             visit(method);
             dispatchTable.add(method.offset, method.label);
         }
         String dispatchTableAllocation = null;
-        for (String label : dispatchTable) {
+        for (String methodLabel : dispatchTable) {
             // Saves the label in the heap and increments $hp
             dispatchTableAllocation = nlJoin(
                     dispatchTableAllocation,
-                    "push " + label, // push the label on the stack
+                    "push " + methodLabel, // push the label on the stack
                     "lhp", // load the current $hp value
                     "sw", // save the pushed label in the heap (at address $hp)
                     incrementHp());
@@ -357,7 +357,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
             declCode = nlJoin(declCode, visit(dec));
             popDecl = nlJoin(popDecl, "pop");
         }
-        for (Node par : n.pars) popParl = nlJoin(popParl, "pop");
+        for (Node _ : n.pars) popParl = nlJoin(popParl, "pop");
         putCode(nlJoin(
                 n.label + ":",
                 "cfp", // set $fp to $sp value (saving reference position in AR)
@@ -382,6 +382,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 generateArgCode(n.args), // generate code for the method call's arguments
+                // Retrieves ID1 value
                 "lfp", // load the address of the current frame's Access Link
                 getDeclarationAR(n.nl, n.refEntry.nl), // retrieve the access of the frame containing the reference ID's
                 // declaration
@@ -405,8 +406,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     public String visitNode(NewNode n) {
         if (print) printNode(n);
-        String loadArgs = null;
-        String allocateArgs = null;
+        String loadArgs = null, allocateArgs = null;
         for (int i = 0; i < n.args.size(); i++) {
             loadArgs = nlJoin(loadArgs, visit(n.args.get(i)));
             allocateArgs = nlJoin(
@@ -418,6 +418,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return nlJoin(
                 loadArgs, // load the arguments on the stack
                 allocateArgs, // allocate each argument on the heap (in reverse order)
+                // NOTE: Could be generalized using nesting level of NewNode
                 "push " + (MEMSIZE + n.entry.offset), // load address of the class's dispatch pointer
                 "lw", // load dispatch pointer on the stack
                 "lhp",

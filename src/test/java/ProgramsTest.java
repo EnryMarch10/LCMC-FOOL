@@ -112,7 +112,7 @@ class ProgramsTest {
         try {
             TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
             typeCheckVisitor.visit(ast);
-            // TODO: does not check return type correctness of FOOL language
+            // NOTE: does not check return type correctness of FOOL language
         } catch (IncomplException e) {
             System.err.println(
                     "Could not determine main program expression type due to errors detected before type checking.");
@@ -163,7 +163,7 @@ class ProgramsTest {
         System.setOut(originalOut);
 
         // The FOOL program should give expected output
-        // TODO: .trim() could be avoided in generalization
+        // NOTE: .trim() could be avoided in generalization
         assertEquals(result, baos.toString().trim().replace("\n", "").replace("\r", ""));
     }
 
