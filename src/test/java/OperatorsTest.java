@@ -1,7 +1,7 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
 public class OperatorsTest {
     private static final String OPS = ProgramsTest.SAMPLES + "tests/operators/";

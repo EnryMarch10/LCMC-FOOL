@@ -17,85 +17,88 @@ import svm.SVMLexer;
 import svm.SVMParser;
 
 public class Test {
-    static void main(String[] args) throws IOException {
+    static void main(final String[] args) throws IOException {
         if (args.length == 0) {
             System.err.println("ERROR: Fool program directory must be passed as input");
             System.exit(1);
         }
-        String fileName = args[0];
+        final String fileName = args[0];
 
-        CharStream chars = CharStreams.fromFileName(fileName);
-        FOOLLexer lexer = new FOOLLexer(chars);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        FOOLParser parser = new FOOLParser(tokens);
+        final CharStream chars = CharStreams.fromFileName(fileName);
+        final var lexer = new FOOLLexer(chars);
+        final var tokens = new CommonTokenStream(lexer);
+        final var parser = new FOOLParser(tokens);
 
-        System.out.println("Generating ST via lexer and parser.");
-        ParseTree st = parser.prog();
-        System.out.println("You had "
+        IO.println("Generating ST via lexer and parser.");
+        final ParseTree st = parser.prog();
+        IO.println("You had "
                 + lexer.lexicalErrors
                 + " lexical errors and "
                 + parser.getNumberOfSyntaxErrors()
                 + " syntax errors.\n");
 
-        System.out.println("Generating AST.");
-        ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
-        Node ast = visitor.visit(st);
-        System.out.println();
+        IO.println("Generating AST.");
+        final var visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
+        final Node ast = visitor.visit(st);
+        IO.println();
 
-        System.out.println("Enriching AST via symbol table.");
-        SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
+        IO.println("Enriching AST via symbol table.");
+        final var symtableVisitor = new SymbolTableASTVisitor();
         symtableVisitor.visit(ast);
-        System.out.println("You had " + symtableVisitor.stErrors + " symbol table errors.\n");
+        IO.println("You had " + symtableVisitor.stErrors + " symbol table errors.\n");
 
-        System.out.println("Visualizing Enriched AST.");
+        IO.println("Visualizing Enriched AST.");
         new PrintEASTVisitor().visit(ast);
-        System.out.println();
+        IO.println();
 
-        System.out.println("Checking Types.");
+        IO.println("Checking Types.");
         try {
-            TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
-            TypeNode mainType = typeCheckVisitor.visit(ast);
-            System.out.print("Type of main program expression is: ");
+            final var typeCheckVisitor = new TypeCheckEASTVisitor();
+            final TypeNode mainType = typeCheckVisitor.visit(ast);
+            IO.print("Type of main program expression is: ");
             new PrintEASTVisitor().visit(mainType);
-        } catch (IncomplException e) {
-            System.out.println(
-                    "Could not determine main program expression type due to errors detected before type checking.");
+        } catch (IncomplException _) {
+            IO.println("Could not determine main program expression type due to errors detected before type checking.");
         } catch (TypeException e) {
-            System.out.println("Type checking error in main program expression: " + e.text);
+            IO.println("Type checking error in main program expression: " + e.text);
         }
-        System.out.println("You had " + FOOLlib.typeErrors + " type checking errors.\n");
+        IO.println("You had " + FOOLlib.typeErrors + " type checking errors.\n");
 
-        int frontEndErrors =
+        final var frontEndErrors =
                 lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors;
-        System.out.println("You had a total of " + frontEndErrors + " front-end errors.\n");
+        IO.println("You had a total of " + frontEndErrors + " front-end errors.\n");
 
-        if (frontEndErrors > 0) System.exit(1);
+        if (frontEndErrors > 0) {
+            System.exit(1);
+        }
 
-        System.out.println("Generating code.");
-        String code = new CodeGenerationASTVisitor().visit(ast);
-        BufferedWriter out = new BufferedWriter(new FileWriter(fileName + ".asm"));
+        IO.println("Generating code.");
+        final String code = new CodeGenerationASTVisitor().visit(ast);
+        final var out = new BufferedWriter(new FileWriter(fileName + ".asm"));
         out.write(code);
         out.close();
-        System.out.println();
+        IO.println();
 
-        System.out.println("Assembling generated code.");
-        CharStream charsASM = CharStreams.fromFileName(fileName + ".asm");
-        SVMLexer lexerASM = new SVMLexer(charsASM);
-        CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
-        SVMParser parserASM = new SVMParser(tokensASM);
+        IO.println("Assembling generated code.");
+        final CharStream charsASM = CharStreams.fromFileName(fileName + ".asm");
+        final var lexerASM = new SVMLexer(charsASM);
+        final var tokensASM = new CommonTokenStream(lexerASM);
+        final var parserASM = new SVMParser(tokensASM);
 
         parserASM.assembly();
 
         // needed only for debug
-        System.out.println("You had: "
+        IO.println("You had: "
                 + lexerASM.lexicalErrors
                 + " lexical errors and "
                 + parserASM.getNumberOfSyntaxErrors()
                 + " syntax errors.\n");
-        if (lexerASM.lexicalErrors + parserASM.getNumberOfSyntaxErrors() > 0) System.exit(1);
+        if (lexerASM.lexicalErrors + parserASM.getNumberOfSyntaxErrors() > 0) {
+            System.exit(1);
+        }
 
-        System.out.println("Running generated code via Stack Virtual Machine.");
-        ExecuteVM vm = new ExecuteVM(parserASM.code);
+        IO.println("Running generated code via Stack Virtual Machine.");
+        final var vm = new ExecuteVM(parserASM.code);
         vm.cpu();
     }
 }

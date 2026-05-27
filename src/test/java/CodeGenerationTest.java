@@ -7,7 +7,7 @@ public class CodeGenerationTest {
         // NOTE: Uncomment when implementing hereditariness
         // "bankloan, 50_000"
     })
-    void testCorrectOutput(String fileName, String expectedResult) {
+    void testCorrectOutput(final String fileName, final String expectedResult) {
         ProgramsTest.testResultFromFile(ProgramsTest.SAMPLES + fileName + ".fool", expectedResult);
     }
 }

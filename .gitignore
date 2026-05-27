@@ -1,4 +1,5 @@
 ## Project ##
+*.hprof
 tmp/
 
 # FOOL compiler temporary files

@@ -8,7 +8,7 @@ public abstract class Node implements Visitable {
         return line;
     }
 
-    public void setLine(int l) {
+    public void setLine(final int l) {
         line = l;
     }
 }

@@ -1,7 +1,8 @@
 plugins {
     java
     application
-    id("com.diffplug.spotless") version "8.3.0"
+    id("com.diffplug.spotless") version "8.4.0"
+    id("org.openrewrite.rewrite") version "7.32.2"
     antlr
 }
 
@@ -23,7 +24,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    // Project specific
+    // OpenRewrite
+    rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.34.1")
+    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.34.1")
+    // Antlr
     antlr("org.antlr:antlr4:4.13.2")
     implementation("org.antlr:antlr4-runtime:4.13.2")
 }
@@ -45,15 +49,27 @@ spotless {
         // Palantir Java Format - A modern, lambda-friendly, 120 character Java formatter.
         palantirJavaFormat().formatJavadoc(true)
 
-        // Import management
+        // Imports
         removeUnusedImports()
-        importOrder()
-
-        // Whitespace rules
+        forbidModuleImports()
+        // Annotations
+        formatAnnotations()
+        // General
         leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
+        // Custom
+        // separator character is also \s, but listed everything to be sure
+        replaceRegex("fixEmptyBodiesIndentation", "\\{[ ]?[ \\t\\n\\x0B\\f\\r]*}", "{ }")
+        replaceRegex("fixEmptyLineFirst", "\\{\\r?\\n(\\r?\\n)+", "{\n")
+        replaceRegex("fixEmptyLineLast", "\\r?\\n(\\r?\\n)+([ \\t\\x0B\\f\\r]*)}", "\n$2}")
     }
+}
+
+rewrite {
+    configFile = project.rootProject.file("config/rewrite/rewrite.yml")
+    activeRecipe("org.marchionni.java.CustomRules")
+    failOnDryRunResults = true
 }
 
 tasks.test {
@@ -73,6 +89,6 @@ val deleteAsmFiles by tasks.registering(Delete::class) {
 
 tasks.register("format") {
     group = "formatting"
-    description = "Runs Spotless"
-    dependsOn("spotlessApply")
+    description = "Runs OpenRewrite then Spotless"
+    dependsOn(tasks.named("spotlessApply"), tasks.named("rewriteRun"))
 }

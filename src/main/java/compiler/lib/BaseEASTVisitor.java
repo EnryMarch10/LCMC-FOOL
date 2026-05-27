@@ -10,22 +10,21 @@ import compiler.exc.UnimplException;
  * @param <E> Exception type.
  */
 public class BaseEASTVisitor<S, E extends Exception> extends BaseASTVisitor<S, E> {
+    protected BaseEASTVisitor() { }
 
-    protected BaseEASTVisitor() {}
-
-    protected BaseEASTVisitor(boolean ie) {
+    protected BaseEASTVisitor(final boolean ie) {
         super(ie);
     }
 
-    protected BaseEASTVisitor(boolean ie, boolean p) {
+    protected BaseEASTVisitor(final boolean ie, final boolean p) {
         super(ie, p);
     }
 
-    protected void printSTentry(String s) {
-        System.out.println(indent + "STentry: " + s);
+    protected void printSTentry(final String s) {
+        IO.println(indent + "STentry: " + s);
     }
 
-    public S visitSTentry(STentry s) throws E {
+    public S visitSTentry(final STentry s) throws E {
         throw new UnimplException();
     }
 }

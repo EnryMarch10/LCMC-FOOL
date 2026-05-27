@@ -1,0 +1,97 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.marchionni.java.CustomRules
+displayName: Custom OpenRewrite Rules
+description: Project-specific rewrite rules excluding NoGuava from transitive plugin deps.
+recipeList:
+  # Imports
+  - org.openrewrite.java.OrderImports
+  - org.openrewrite.java.RemoveUnusedImports
+  # Java 25
+  - org.marchionni.java.JavaBestPractices
+  # Static Analysis
+  - org.openrewrite.staticanalysis.CommonStaticAnalysis
+  # Final
+  - org.openrewrite.staticanalysis.FinalizeLocalVariables
+  - org.openrewrite.staticanalysis.FinalClass
+  - org.openrewrite.staticanalysis.FinalizePrivateFields
+  - org.openrewrite.staticanalysis.FinalizeMethodArguments
+  # Override
+  - org.openrewrite.staticanalysis.MissingOverrideAnnotation
+  # Unused
+  - org.openrewrite.staticanalysis.RemoveUnusedLocalVariables
+  - org.openrewrite.staticanalysis.RemoveUnusedPrivateFields
+  # Safety
+  - org.openrewrite.staticanalysis.NullableOnMethodReturnType
+  - org.openrewrite.staticanalysis.UnnecessaryThrows
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.marchionni.java.JavaBestPractices
+displayName: Java best practices
+description: >-
+  Applies opinionated best practices for Java projects targeting Java 25.
+  This recipe includes the full Java 25 upgrade chain plus additional improvements
+  to code style, API usage, and third-party dependency reduction that go beyond
+  what the version migration recipes apply.
+tags:
+  - java25
+  - best-practices
+preconditions:
+  - org.openrewrite.Singleton
+recipeList:
+  # Upgrade to the latest Java version
+  - org.openrewrite.java.migrate.UpgradeToJava25
+  # Text blocks for strings without newlines (upgrade chain only does convertStringsWithoutNewlines: false)
+  - org.openrewrite.java.migrate.lang.UseTextBlocks:
+      convertStringsWithoutNewlines: true
+  # Prefer Java standard library over Guava where possible
+  #  NOTE: doesn't work
+  #  - org.openrewrite.java.migrate.guava.NoGuava
+  # Prefer Java standard library over Joda-Time where possible
+  - org.openrewrite.java.joda.time.NoJodaTime
+  # JSpecify nullability annotations best practices
+  #  NOTE: not necessary
+  # - org.openrewrite.java.jspecify.JSpecifyBestPractices
+  # Local variable type inference — targeted, non-controversial uses
+  # NOTE: UseVarForGenericsConstructors and UseVarForGenericMethodInvocations must run
+  # before UseDiamondOperator, as they need the explicit type arguments on constructors
+  # to safely infer the type for var. Diamond would erase that information.
+  - org.openrewrite.java.migrate.lang.var.UseVarForTypeCast
+  - org.openrewrite.java.migrate.lang.var.UseVarForConstructors
+  - org.openrewrite.java.migrate.lang.var.UseVarForGenericsConstructors
+  - org.openrewrite.java.migrate.lang.var.UseVarForGenericMethodInvocations
+  - org.openrewrite.java.migrate.lang.var.UseVarForPrimitive
+  # Prefer modern Java collection factories and utilities
+  - org.openrewrite.java.migrate.util.JavaUtilAPIs
+  # Static analysis: bug prevention
+  - org.openrewrite.staticanalysis.EqualsAvoidsNull
+  - org.openrewrite.staticanalysis.MissingOverrideAnnotation
+  - org.openrewrite.staticanalysis.ReplaceWeekYearWithYear
+  - org.openrewrite.staticanalysis.RemoveHashCodeCallsFromArrayInstances
+  - org.openrewrite.staticanalysis.RemoveToStringCallsFromArrayInstances
+  - org.openrewrite.staticanalysis.UseObjectNotifyAll
+  - org.openrewrite.staticanalysis.RemoveCallsToSystemGc
+  - org.openrewrite.staticanalysis.RemoveCallsToObjectFinalize
+  - org.openrewrite.staticanalysis.URLEqualsHashCodeRecipes
+  # Static analysis: modernization and cleanup
+  - org.openrewrite.staticanalysis.LambdaBlockToExpression
+  - org.openrewrite.staticanalysis.ReplaceLambdaWithMethodReference
+  - org.openrewrite.staticanalysis.UseDiamondOperator
+  - org.openrewrite.staticanalysis.UnnecessaryParentheses
+  - org.openrewrite.staticanalysis.RemoveRedundantNullCheckBeforeInstanceof
+  - org.openrewrite.staticanalysis.ReplaceStringBuilderWithString
+  #  NOTE: doesn't work
+  #  - org.openrewrite.staticanalysis.UseCollectionInterfaces
+  - org.openrewrite.staticanalysis.CompareEnumsWithEqualityOperator
+  - org.openrewrite.staticanalysis.CombineSemanticallyEqualCatchBlocks
+  - org.openrewrite.staticanalysis.UseStringReplace
+  - org.openrewrite.staticanalysis.UseStandardCharset
+  - org.openrewrite.staticanalysis.UseSystemLineSeparator
+  - org.openrewrite.staticanalysis.RemoveRedundantTypeCast
+  - org.openrewrite.staticanalysis.ReplaceStackWithDeque
+  - org.openrewrite.staticanalysis.UseListSort
+  - org.openrewrite.staticanalysis.EqualsToContentEquals
+  # Markdown documentation comments (JEP 467, Java 23+)
+#  NOTE: doesn't work
+#  - org.openrewrite.java.migrate.lang.JavadocToMarkdownDocComment

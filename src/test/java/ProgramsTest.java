@@ -1,11 +1,15 @@
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import compiler.*;
 import compiler.exc.IncomplException;
 import compiler.exc.TypeException;
 import compiler.lib.FOOLlib;
 import compiler.lib.Node;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
+import java.io.PrintStream;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import org.antlr.v4.runtime.CharStream;
@@ -22,38 +26,38 @@ class ProgramsTest {
     public static final String SAMPLES = "samples/";
 
     public static CharStream fromFile(String fileName) {
-        AtomicReference<CharStream> chars = new AtomicReference<>();
+        final var chars = new AtomicReference<CharStream>();
         assertDoesNotThrow(() -> chars.set(CharStreams.fromFileName(fileName)));
         return chars.get();
     }
 
     public static int getScanningErrors(final CharStream input) {
-        FOOLLexer lexer = new FOOLLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        FOOLParser parser = new FOOLParser(tokens);
+        final var lexer = new FOOLLexer(input);
+        final var tokens = new CommonTokenStream(lexer);
+        final var parser = new FOOLParser(tokens);
         parser.prog();
         return lexer.lexicalErrors;
     }
 
     public static int getParsingErrors(final CharStream input) {
-        FOOLLexer lexer = new FOOLLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        FOOLParser parser = new FOOLParser(tokens);
+        final var lexer = new FOOLLexer(input);
+        final var tokens = new CommonTokenStream(lexer);
+        final var parser = new FOOLParser(tokens);
         parser.prog();
         assertEquals(0, lexer.lexicalErrors);
         return parser.getNumberOfSyntaxErrors();
     }
 
     public static int getSymbolTableErrors(final CharStream input) {
-        FOOLLexer lexer = new FOOLLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        FOOLParser parser = new FOOLParser(tokens);
-        ParseTree st = parser.prog();
+        final var lexer = new FOOLLexer(input);
+        final var tokens = new CommonTokenStream(lexer);
+        final var parser = new FOOLParser(tokens);
+        final ParseTree st = parser.prog();
         assertEquals(0, lexer.lexicalErrors);
         assertEquals(0, parser.getNumberOfSyntaxErrors());
-        ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor();
-        Node ast = visitor.visit(st);
-        SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
+        final var visitor = new ASTGenerationSTVisitor();
+        final Node ast = visitor.visit(st);
+        final var symtableVisitor = new SymbolTableASTVisitor();
         symtableVisitor.visit(ast);
         return symtableVisitor.stErrors;
     }
@@ -62,22 +66,22 @@ class ProgramsTest {
         // Static fields must be always reset
         FOOLlib.reset();
 
-        FOOLLexer lexer = new FOOLLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        FOOLParser parser = new FOOLParser(tokens);
-        ParseTree st = parser.prog();
+        final var lexer = new FOOLLexer(input);
+        final var tokens = new CommonTokenStream(lexer);
+        final var parser = new FOOLParser(tokens);
+        final ParseTree st = parser.prog();
         assertEquals(0, lexer.lexicalErrors);
         assertEquals(0, parser.getNumberOfSyntaxErrors());
-        ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor();
-        Node ast = visitor.visit(st);
-        SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
+        final var visitor = new ASTGenerationSTVisitor();
+        final Node ast = visitor.visit(st);
+        final var symtableVisitor = new SymbolTableASTVisitor();
         symtableVisitor.visit(ast);
         assertEquals(0, symtableVisitor.stErrors);
         try {
-            TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
+            final var typeCheckVisitor = new TypeCheckEASTVisitor();
             typeCheckVisitor.visit(ast);
             // Doesn't check return type correctness of FOOL language
-        } catch (IncomplException e) {
+        } catch (IncomplException _) {
             System.err.println(
                     "Could not determine main program expression type due to errors detected before type checking.");
         } catch (TypeException e) {
@@ -90,30 +94,30 @@ class ProgramsTest {
         // Static fields must be always reset
         FOOLlib.reset();
 
-        FOOLLexer lexer = new FOOLLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        FOOLParser parser = new FOOLParser(tokens);
+        final var lexer = new FOOLLexer(input);
+        final var tokens = new CommonTokenStream(lexer);
+        final var parser = new FOOLParser(tokens);
 
         // Generating ST via lexer and parser
-        ParseTree st = parser.prog();
+        final ParseTree st = parser.prog();
         assertEquals(0, lexer.lexicalErrors);
         assertEquals(0, parser.getNumberOfSyntaxErrors());
 
         // Generating AST
-        ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor();
-        Node ast = visitor.visit(st);
+        final var visitor = new ASTGenerationSTVisitor();
+        final Node ast = visitor.visit(st);
 
         // Enriching AST via symbol table
-        SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
+        final var symtableVisitor = new SymbolTableASTVisitor();
         symtableVisitor.visit(ast);
         assertEquals(0, symtableVisitor.stErrors);
 
         // Checking Types
         try {
-            TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
+            final var typeCheckVisitor = new TypeCheckEASTVisitor();
             typeCheckVisitor.visit(ast);
             // NOTE: does not check return type correctness of FOOL language
-        } catch (IncomplException e) {
+        } catch (IncomplException _) {
             System.err.println(
                     "Could not determine main program expression type due to errors detected before type checking.");
         } catch (TypeException e) {
@@ -124,8 +128,8 @@ class ProgramsTest {
         // lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors = 0
 
         // Generating code.
-        String code = new CodeGenerationASTVisitor().visit(ast);
-        AtomicReference<CharStream> charsASM = new AtomicReference<>();
+        final String code = new CodeGenerationASTVisitor().visit(ast);
+        final var charsASM = new AtomicReference<CharStream>();
         if (!Objects.equals(fileName, "")) {
             assertDoesNotThrow(() -> {
                 final var out = new BufferedWriter(new FileWriter(fileName + ".asm"));
@@ -139,9 +143,9 @@ class ProgramsTest {
         } else {
             charsASM.set(CharStreams.fromString(code));
         }
-        SVMLexer lexerASM = new SVMLexer(charsASM.get());
-        CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
-        SVMParser parserASM = new SVMParser(tokensASM);
+        final var lexerASM = new SVMLexer(charsASM.get());
+        final var tokensASM = new CommonTokenStream(lexerASM);
+        final var parserASM = new SVMParser(tokensASM);
 
         parserASM.assembly();
 
@@ -150,11 +154,11 @@ class ProgramsTest {
         assertEquals(0, parserASM.getNumberOfSyntaxErrors());
 
         // creating Stack Virtual Machine
-        ExecuteVM vm = new ExecuteVM(parserASM.code);
+        final var vm = new ExecuteVM(parserASM.code);
 
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
+        final PrintStream originalOut = System.out;
+        final var baos = new ByteArrayOutputStream();
+        final var ps = new PrintStream(baos);
         System.setOut(ps);
 
         // Running generated code via Stack Virtual Machine
@@ -167,7 +171,7 @@ class ProgramsTest {
         assertEquals(result, baos.toString().trim().replace("\n", "").replace("\r", ""));
     }
 
-    public static void testResultFromString(final String input, String result) {
+    public static void testResultFromString(final String input, final String result) {
         testResult("", CharStreams.fromString(input), result);
     }
 

@@ -18,18 +18,21 @@ import java.util.List;
  * This class acts as the Code Generator (4-th and last component of the Compiler).
  */
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
+    public CodeGenerationASTVisitor() { }
 
-    public CodeGenerationASTVisitor() {}
-
-    public CodeGenerationASTVisitor(boolean debug) {
+    public CodeGenerationASTVisitor(final boolean debug) {
         super(false, debug);
     } // enables print for debugging
 
     @Override
-    public String visitNode(ProgLetInNode n) {
-        if (print) printNode(n);
+    public String visitNode(final ProgLetInNode n) {
+        if (print) {
+            printNode(n);
+        }
         String declCode = null;
-        for (Node dec : n.declist) declCode = nlJoin(declCode, visit(dec));
+        for (Node dec : n.declist) {
+            declCode = nlJoin(declCode, visit(dec));
+        }
         return nlJoin(
                 "push 0", // fake return address, could be any value, used for consistency (offset -2 for declarations
                 // inside a function in symbol table)
@@ -40,21 +43,29 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(ProgNode n) {
-        if (print) printNode(n);
+    public String visitNode(final ProgNode n) {
+        if (print) {
+            printNode(n);
+        }
         return nlJoin(visit(n.exp), "halt");
     }
 
     @Override
-    public String visitNode(FunNode n) {
-        if (print) printNode(n, n.id);
-        String declCode = null, popDecl = null, popParl = null;
+    public String visitNode(final FunNode n) {
+        if (print) {
+            printNode(n, n.id);
+        }
+        String declCode = null;
+        String popDecl = null;
+        String popParl = null;
         for (Node dec : n.declist) {
             declCode = nlJoin(declCode, visit(dec));
             popDecl = nlJoin(popDecl, "pop");
         }
-        for (int i = 0; i < n.parlist.size(); i++) popParl = nlJoin(popParl, "pop");
-        String funl = freshFunLabel();
+        for (var i = 0; i < n.parlist.size(); i++) {
+            popParl = nlJoin(popParl, "pop");
+        }
+        final String funl = freshFunLabel();
         putCode(nlJoin(
                 funl + ":",
                 "cfp", // set $fp to $sp value (saving reference position in AR)
@@ -76,22 +87,28 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     // Step in creating AR (activation record)
     @Override
-    public String visitNode(VarNode n) {
-        if (print) printNode(n, n.id);
+    public String visitNode(final VarNode n) {
+        if (print) {
+            printNode(n, n.id);
+        }
         return visit(n.exp);
     }
 
     @Override
-    public String visitNode(PrintNode n) {
-        if (print) printNode(n);
+    public String visitNode(final PrintNode n) {
+        if (print) {
+            printNode(n);
+        }
         return nlJoin(visit(n.exp), "print"); // prints top of the stack
     }
 
     @Override
-    public String visitNode(IfNode n) {
-        if (print) printNode(n);
-        String l1 = freshLabel();
-        String l2 = freshLabel();
+    public String visitNode(final IfNode n) {
+        if (print) {
+            printNode(n);
+        }
+        final String l1 = freshLabel();
+        final String l2 = freshLabel();
         return nlJoin(
                 visit(n.cond),
                 "push 1", // push true to check if cond is true
@@ -104,10 +121,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(EqualNode n) {
-        if (print) printNode(n);
-        String l1 = freshLabel();
-        String l2 = freshLabel();
+    public String visitNode(final EqualNode n) {
+        if (print) {
+            printNode(n);
+        }
+        final String l1 = freshLabel();
+        final String l2 = freshLabel();
         return nlJoin(
                 visit(n.left),
                 visit(n.right),
@@ -120,10 +139,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(GreaterEqualNode n) {
-        if (print) printNode(n);
-        String l1 = freshLabel();
-        String l2 = freshLabel();
+    public String visitNode(final GreaterEqualNode n) {
+        if (print) {
+            printNode(n);
+        }
+        final String l1 = freshLabel();
+        final String l2 = freshLabel();
         return nlJoin(
                 // Pushes the right operand first, since l >= r is equivalent to r <= l
                 visit(n.right),
@@ -137,10 +158,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(LessEqualNode n) {
-        if (print) printNode(n);
-        String l1 = freshLabel();
-        String l2 = freshLabel();
+    public String visitNode(final LessEqualNode n) {
+        if (print) {
+            printNode(n);
+        }
+        final String l1 = freshLabel();
+        final String l2 = freshLabel();
         return nlJoin(
                 visit(n.left),
                 visit(n.right),
@@ -153,11 +176,13 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(AndNode n) {
-        if (print) printNode(n);
-        String end = freshLabel();
-        String leftTrue = freshLabel();
-        String rightTrue = freshLabel();
+    public String visitNode(final AndNode n) {
+        if (print) {
+            printNode(n);
+        }
+        final String end = freshLabel();
+        final String leftTrue = freshLabel();
+        final String rightTrue = freshLabel();
         return nlJoin(
                 // Evaluates the left operand
                 visit(n.left),
@@ -181,10 +206,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(OrNode n) {
-        if (print) printNode(n);
-        String l1 = freshLabel();
-        String l2 = freshLabel();
+    public String visitNode(final OrNode n) {
+        if (print) {
+            printNode(n);
+        }
+        final String l1 = freshLabel();
+        final String l2 = freshLabel();
         return nlJoin( // Does SHORT CIRCUIT EVALUATION
                 visit(n.left),
                 "push 1", // push true to check if left cond is true
@@ -199,10 +226,13 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 l2 + ":");
     }
 
-    public String visitNode(NotNode n) {
-        if (print) printNode(n);
-        String expressionTrue = freshLabel();
-        String end = freshLabel();
+    @Override
+    public String visitNode(final NotNode n) {
+        if (print) {
+            printNode(n);
+        }
+        final String expressionTrue = freshLabel();
+        final String end = freshLabel();
         return nlJoin(
                 // Evaluates expression
                 visit(n.exp),
@@ -217,26 +247,34 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(TimesNode n) {
-        if (print) printNode(n);
+    public String visitNode(final TimesNode n) {
+        if (print) {
+            printNode(n);
+        }
         return nlJoin(visit(n.left), visit(n.right), "mult");
     }
 
     @Override
-    public String visitNode(DivNode n) {
-        if (print) printNode(n);
+    public String visitNode(final DivNode n) {
+        if (print) {
+            printNode(n);
+        }
         return nlJoin(visit(n.left), visit(n.right), "div");
     }
 
     @Override
-    public String visitNode(PlusNode n) {
-        if (print) printNode(n);
+    public String visitNode(final PlusNode n) {
+        if (print) {
+            printNode(n);
+        }
         return nlJoin(visit(n.left), visit(n.right), "add");
     }
 
     @Override
-    public String visitNode(MinusNode n) {
-        if (print) printNode(n);
+    public String visitNode(final MinusNode n) {
+        if (print) {
+            printNode(n);
+        }
         return nlJoin(visit(n.left), visit(n.right), "sub");
     }
 
@@ -246,9 +284,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
      * @param arglist the list of arguments.
      * @return the generated code.
      */
-    private String generateArgCode(List<Node> arglist) {
+    private String generateArgCode(final List<Node> arglist) {
         String argCode = null;
-        for (int i = arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(arglist.get(i)));
+        for (var i = arglist.size() - 1; i >= 0; i--) {
+            argCode = nlJoin(argCode, visit(arglist.get(i)));
+        }
         return argCode;
     }
 
@@ -260,15 +300,19 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
      * @param entryNl the nesting level of the ID's declaration.
      * @return the generated code.
      */
-    private String getDeclarationAR(int usageNl, int entryNl) {
+    private String getDeclarationAR(final int usageNl, final int entryNl) {
         String getAR = null;
-        for (int i = 0; i < usageNl - entryNl; i++) getAR = nlJoin(getAR, "lw");
+        for (var i = 0; i < usageNl - entryNl; i++) {
+            getAR = nlJoin(getAR, "lw");
+        }
         return getAR;
     }
 
     @Override
-    public String visitNode(CallNode n) {
-        if (print) printNode(n, n.id + "()");
+    public String visitNode(final CallNode n) {
+        if (print) {
+            printNode(n, n.id + "()");
+        }
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 generateArgCode(n.arglist), // generate code for argument expressions in reversed order
@@ -288,8 +332,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(IdNode n) {
-        if (print) printNode(n, n.id);
+    public String visitNode(final IdNode n) {
+        if (print) {
+            printNode(n, n.id);
+        }
         return nlJoin(
                 "lfp",
                 getDeclarationAR(n.nl, n.entry.nl), // retrieve address of frame containing "id" declaration
@@ -301,14 +347,18 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(BoolNode n) {
-        if (print) printNode(n, n.val.toString());
+    public String visitNode(final BoolNode n) {
+        if (print) {
+            printNode(n, n.val.toString());
+        }
         return "push " + (n.val ? 1 : 0);
     }
 
     @Override
-    public String visitNode(IntNode n) {
-        if (print) printNode(n, n.val.toString());
+    public String visitNode(final IntNode n) {
+        if (print) {
+            printNode(n, n.val.toString());
+        }
         return "push " + n.val;
     }
 
@@ -326,9 +376,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 );
     }
 
-    public String visitNode(ClassNode n) {
-        if (print) printNode(n, n.id);
-        final List<String> dispatchTable = new ArrayList<>();
+    @Override
+    public String visitNode(final ClassNode n) {
+        if (print) {
+            printNode(n, n.id);
+        }
+        final var dispatchTable = new ArrayList<String>();
         for (var method : n.methods) {
             visit(method);
             dispatchTable.add(method.offset, method.label);
@@ -349,15 +402,21 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(MethodNode n) {
-        if (print) printNode(n, n.id);
+    public String visitNode(final MethodNode n) {
+        if (print) {
+            printNode(n, n.id);
+        }
         n.label = freshFunLabel();
-        String declCode = null, popDecl = null, popParl = null;
+        String declCode = null;
+        String popDecl = null;
+        String popParl = null;
         for (Node dec : n.decs) {
             declCode = nlJoin(declCode, visit(dec));
             popDecl = nlJoin(popDecl, "pop");
         }
-        for (Node _ : n.pars) popParl = nlJoin(popParl, "pop");
+        for (Node _ : n.pars) {
+            popParl = nlJoin(popParl, "pop");
+        }
         putCode(nlJoin(
                 n.label + ":",
                 "cfp", // set $fp to $sp value (saving reference position in AR)
@@ -377,8 +436,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return null;
     }
 
-    public String visitNode(ClassCallNode n) {
-        if (print) printNode(n, n.refId + "." + n.methodId + "()");
+    @Override
+    public String visitNode(final ClassCallNode n) {
+        if (print) {
+            printNode(n, n.refId + "." + n.methodId + "()");
+        }
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 generateArgCode(n.args), // generate code for the method call's arguments
@@ -404,10 +466,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 );
     }
 
-    public String visitNode(NewNode n) {
-        if (print) printNode(n);
-        String loadArgs = null, allocateArgs = null;
-        for (int i = 0; i < n.args.size(); i++) {
+    @Override
+    public String visitNode(final NewNode n) {
+        if (print) {
+            printNode(n);
+        }
+        String loadArgs = null;
+        String allocateArgs = null;
+        for (var i = 0; i < n.args.size(); i++) {
             loadArgs = nlJoin(loadArgs, visit(n.args.get(i)));
             allocateArgs = nlJoin(
                     allocateArgs,
@@ -428,8 +494,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(EmptyNode n) {
-        if (print) printNode(n);
+    public String visitNode(final EmptyNode n) {
+        if (print) {
+            printNode(n);
+        }
         return "push -1";
     }
 }

@@ -2,10 +2,10 @@ package compiler.lib;
 
 /** Class that manages utility methods for the FOOL programming language. */
 public class FOOLlib {
-    public static int typeErrors = 0;
-    private static int labCount = 0;
-    private static int funlabCount = 0;
-    private static String funCode = null;
+    public static int typeErrors;
+    private static int labCount;
+    private static int funlabCount;
+    private static String funCode;
 
     /**
      * Extracts name from {@code Node} class.
@@ -13,7 +13,7 @@ public class FOOLlib {
      * @param s is in the form {@code compiler.AST$NameNode}.
      * @return Extracts {@code Name} from {@code compiler.AST$NameNode}.
      */
-    public static String extractNodeName(String s) { // s is in the form compiler.AST$NameNode
+    public static String extractNodeName(final String s) { // s is in the form compiler.AST$NameNode
         return s.substring(s.lastIndexOf('$') + 1, s.length() - 4);
     }
 
@@ -23,7 +23,7 @@ public class FOOLlib {
      * @param s is in the form {@code compiler.AST$NameTypeNode}.
      * @return Extracts {@code Name} from {@code compiler.AST$NameTypeNode}.
      */
-    public static String extractTypeNodeName(String s) { // s is in the form compiler.AST$NameTypeNode
+    public static String extractTypeNodeName(final String s) { // s is in the form compiler.AST$NameTypeNode
         return s.substring(s.lastIndexOf('$') + 1, s.length() - 8);
     }
 
@@ -33,11 +33,11 @@ public class FOOLlib {
      * @param s is in the form {@code compiler.FOOLParser$NameContext}.
      * @return Extracts {@code Name} from {@code compiler.FOOLParser$NameContext}.
      */
-    public static String extractCtxName(String s) { // s is in the form compiler.FOOLParser$NameContext
+    public static String extractCtxName(final String s) { // s is in the form compiler.FOOLParser$NameContext
         return s.substring(s.lastIndexOf('$') + 1, s.length() - 7);
     }
 
-    public static String lowerizeFirstChar(String s) {
+    public static String lowerizeFirstChar(final String s) {
         return Character.toLowerCase(s.charAt(0)) + s.substring(1);
     }
 
@@ -47,7 +47,7 @@ public class FOOLlib {
      * @param lines the sequence of strings.
      * @return the joined string.
      */
-    public static String nlJoin(String... lines) {
+    public static String nlJoin(final String... lines) {
         String code = null;
         for (String line : lines) {
             if (line != null) {
@@ -70,7 +70,7 @@ public class FOOLlib {
      *
      * @param c the function code string.
      */
-    public static void putCode(String c) {
+    public static void putCode(final String c) {
         funCode = nlJoin(funCode, "", c);
     }
 

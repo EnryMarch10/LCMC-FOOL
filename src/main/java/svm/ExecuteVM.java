@@ -14,21 +14,22 @@ public class ExecuteVM {
     private final int[] memory = new int[MEMSIZE]; // stack + heap (MEMSIZE-0)
 
     // Registers
-    private int ip = 0; // instruction pointer
+    private int ip; // instruction pointer
     private int sp = MEMSIZE; // stack pointer
-    private int hp = 0; // heap pointer
+    private int hp; // heap pointer
     private int fp = MEMSIZE; // frame pointer
     private int ra; // return address
     private int tm; // temporary storage
 
-    public ExecuteVM(int[] code) {
+    public ExecuteVM(final int[] code) {
         this.code = code;
     }
 
     public void cpu() {
         while (true) {
-            int bytecode = code[ip++]; // fetch
-            int v1, v2;
+            final var bytecode = code[ip++]; // fetch
+            int v1;
+            int v2;
             int address;
             switch (bytecode) { // decode + execute
                 case SVMParser.PUSH:
@@ -72,13 +73,17 @@ public class ExecuteVM {
                     address = code[ip++];
                     v1 = pop();
                     v2 = pop();
-                    if (v2 == v1) ip = address;
+                    if (v2 == v1) {
+                        ip = address;
+                    }
                     break;
                 case SVMParser.BRANCHLESSEQ:
                     address = code[ip++];
                     v1 = pop();
                     v2 = pop();
-                    if (v2 <= v1) ip = address;
+                    if (v2 <= v1) {
+                        ip = address;
+                    }
                     break;
                 case SVMParser.JS:
                     address = pop();
@@ -113,7 +118,7 @@ public class ExecuteVM {
                     push(hp);
                     break;
                 case SVMParser.PRINT:
-                    System.out.println((sp < MEMSIZE) ? memory[sp] : "Empty stack!");
+                    IO.println(sp < MEMSIZE ? memory[sp] : "Empty stack!");
                     break;
                 case SVMParser.HALT:
                     return;
@@ -125,7 +130,7 @@ public class ExecuteVM {
         return memory[sp++];
     }
 
-    private void push(int v) {
+    private void push(final int v) {
         memory[--sp] = v;
     }
 }

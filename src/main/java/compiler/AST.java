@@ -18,13 +18,13 @@ public class AST {
         final List<DecNode> declist;
         final Node exp;
 
-        ProgLetInNode(List<DecNode> d, Node e) {
+        ProgLetInNode(final List<DecNode> d, final Node e) {
             declist = Collections.unmodifiableList(d);
             exp = e;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -32,12 +32,12 @@ public class AST {
     public static class ProgNode extends Node {
         final Node exp;
 
-        ProgNode(Node e) {
+        ProgNode(final Node e) {
             exp = e;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -49,7 +49,7 @@ public class AST {
         final List<DecNode> declist;
         final Node exp;
 
-        FunNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
+        FunNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e) {
             id = i;
             retType = rt;
             parlist = Collections.unmodifiableList(pl);
@@ -58,7 +58,7 @@ public class AST {
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -66,13 +66,13 @@ public class AST {
     public static class ParNode extends DecNode {
         final String id;
 
-        ParNode(String i, TypeNode t) {
+        ParNode(final String i, final TypeNode t) {
             id = i;
             type = t;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -81,14 +81,14 @@ public class AST {
         final String id;
         final Node exp;
 
-        VarNode(String i, TypeNode t, Node v) {
+        VarNode(final String i, final TypeNode t, final Node v) {
             id = i;
             type = t;
             exp = v;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -96,12 +96,12 @@ public class AST {
     public static class PrintNode extends Node {
         final Node exp;
 
-        PrintNode(Node e) {
+        PrintNode(final Node e) {
             exp = e;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -111,14 +111,14 @@ public class AST {
         final Node th;
         final Node el;
 
-        IfNode(Node c, Node t, Node e) {
+        IfNode(final Node c, final Node t, final Node e) {
             cond = c;
             th = t;
             el = e;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -127,13 +127,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        EqualNode(Node l, Node r) {
+        EqualNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -142,13 +142,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        GreaterEqualNode(Node l, Node r) {
+        GreaterEqualNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -157,13 +157,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        LessEqualNode(Node l, Node r) {
+        LessEqualNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -172,13 +172,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        AndNode(Node l, Node r) {
+        AndNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -187,13 +187,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        OrNode(Node l, Node r) {
+        OrNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -201,12 +201,12 @@ public class AST {
     public static class NotNode extends Node {
         final Node exp;
 
-        NotNode(Node e) {
+        NotNode(final Node e) {
             exp = e;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -215,13 +215,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        TimesNode(Node l, Node r) {
+        TimesNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -230,13 +230,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        DivNode(Node l, Node r) {
+        DivNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -245,13 +245,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        PlusNode(Node l, Node r) {
+        PlusNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -260,13 +260,13 @@ public class AST {
         final Node left;
         final Node right;
 
-        MinusNode(Node l, Node r) {
+        MinusNode(final Node l, final Node r) {
             left = l;
             right = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -277,13 +277,13 @@ public class AST {
         STentry entry;
         int nl;
 
-        CallNode(String i, List<Node> p) {
+        CallNode(final String i, final List<Node> p) {
             id = i;
             arglist = Collections.unmodifiableList(p);
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -293,12 +293,12 @@ public class AST {
         STentry entry;
         int nl;
 
-        IdNode(String i) {
+        IdNode(final String i) {
             id = i;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -306,12 +306,12 @@ public class AST {
     public static class BoolNode extends Node {
         final Boolean val;
 
-        BoolNode(boolean n) {
+        BoolNode(final boolean n) {
             val = n;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -319,12 +319,12 @@ public class AST {
     public static class IntNode extends Node {
         final Integer val;
 
-        IntNode(Integer n) {
+        IntNode(final Integer n) {
             val = n;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -333,27 +333,27 @@ public class AST {
         final List<TypeNode> parlist;
         final TypeNode ret;
 
-        ArrowTypeNode(List<TypeNode> p, TypeNode r) {
+        ArrowTypeNode(final List<TypeNode> p, final TypeNode r) {
             parlist = Collections.unmodifiableList(p);
             ret = r;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
 
     public static class BoolTypeNode extends TypeNode {
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
 
     public static class IntTypeNode extends TypeNode {
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -363,14 +363,14 @@ public class AST {
         final List<FieldNode> fields;
         final List<MethodNode> methods;
 
-        ClassNode(String id, List<FieldNode> fields, List<MethodNode> methods) {
+        ClassNode(final String id, final List<FieldNode> fields, final List<MethodNode> methods) {
             this.id = id;
             this.fields = Collections.unmodifiableList(fields);
             this.methods = Collections.unmodifiableList(methods);
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -378,13 +378,13 @@ public class AST {
     public static class FieldNode extends DecNode {
         final String id;
 
-        FieldNode(String id, TypeNode type) {
+        FieldNode(final String id, final TypeNode type) {
             this.id = id;
             this.type = type;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -398,7 +398,12 @@ public class AST {
         int offset;
         String label;
 
-        MethodNode(String id, TypeNode returnType, List<ParNode> pars, List<DecNode> decs, Node exp) {
+        MethodNode(
+                final String id,
+                final TypeNode returnType,
+                final List<ParNode> pars,
+                final List<DecNode> decs,
+                final Node exp) {
             this.id = id;
             this.returnType = returnType;
             this.pars = Collections.unmodifiableList(pars);
@@ -407,7 +412,7 @@ public class AST {
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -420,14 +425,14 @@ public class AST {
         STentry methodEntry;
         int nl;
 
-        ClassCallNode(String refId, String methodId, List<Node> args) {
+        ClassCallNode(final String refId, final String methodId, final List<Node> args) {
             this.refId = refId;
             this.methodId = methodId;
             this.args = Collections.unmodifiableList(args);
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -440,20 +445,20 @@ public class AST {
         // The class's declaration is taken directly from MEMSIZE + n.entry.offset, so this field is never accessed.
         // However, it might be useful in case of nested classes in the future.
 
-        NewNode(String id, List<Node> args) {
+        NewNode(final String id, final List<Node> args) {
             this.id = id;
             this.args = Collections.unmodifiableList(args);
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
 
     public static class EmptyNode extends Node {
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -462,13 +467,13 @@ public class AST {
         final List<TypeNode> fields;
         final List<ArrowTypeNode> methods;
 
-        ClassTypeNode(List<TypeNode> fields, List<ArrowTypeNode> methods) {
+        ClassTypeNode(final List<TypeNode> fields, final List<ArrowTypeNode> methods) {
             this.fields = fields;
             this.methods = methods;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
@@ -476,19 +481,19 @@ public class AST {
     public static class RefTypeNode extends TypeNode {
         final String classId;
 
-        RefTypeNode(String classId) {
+        RefTypeNode(final String classId) {
             this.classId = classId;
         }
 
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
 
     public static class EmptyTypeNode extends TypeNode {
         @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
             return visitor.visitNode(this);
         }
     }
