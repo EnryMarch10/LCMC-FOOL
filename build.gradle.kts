@@ -81,14 +81,28 @@ tasks.test {
 
 // Custom tasks
 
-val deleteAsmFiles by tasks.registering(Delete::class) {
-    delete(fileTree(projectDir) {
-        include("**/*.asm")
-    })
+// lintTasks INCLUDED
+tasks.register("ciLint") {
+    group = "verification"
+    description = "Runs all checks except tests"
+    dependsOn("check")
+}
+
+// lintTasks EXCLUDED
+tasks.register("ciBuild") {
+    group = "build"
+    description = "CI build without linting tasks"
+    dependsOn("assemble", "test")
 }
 
 tasks.register("format") {
     group = "formatting"
     description = "Runs OpenRewrite then Spotless"
     dependsOn(tasks.named("spotlessApply"), tasks.named("rewriteRun"))
+}
+
+val deleteAsmFiles by tasks.registering(Delete::class) {
+    delete(fileTree(projectDir) {
+        include("**/*.asm")
+    })
 }
