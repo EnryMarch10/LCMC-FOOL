@@ -2,22 +2,22 @@
 
 ## 1. First OBJECT layout:
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-[MEMSIZE - TOP OF THE HEAP]
+[MEMSIZE - BOTTOM OF THE HEAP]
 ... <- $hp after allocating the object
 * Dispatch Pointer                    [offset  0] <- OBJECT POINTER
 * value first field declared          [offset -1]
 ```
 * value last (n-th) field declared    [offset -n]
 ... (dispatch tables here)
-[0 - BOTTOM OF THE HEAP]
+[0 - TOP OF THE HEAP]
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ## 2. First DISPATCH TABLE layout:
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-[MEMSIZE - TOP OF THE HEAP]
+[MEMSIZE - BOTTOM OF THE HEAP]
 ... <- $hp after allocating the dispatch table
 * address last (m-th) method declared [offset m - 1]
 ```
 * address first method declared       [offset 0] <- DISPATCH POINTER
-[0 - BOTTOM OF THE HEAP]
+[0 - TOP OF THE HEAP]
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
