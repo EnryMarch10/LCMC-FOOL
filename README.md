@@ -1,6 +1,6 @@
 # FOOL Compiler
 
-Project implementing a Functional Object Oriented Compiler for the course
+Project implementing a Functional Object Oriented Language Compiler for the course
 [Languages, Compilers and Computational Models - a.y. 2025-2026](https://www.unibo.it/en/teaching/course-unit-catalogue/course-unit/2025/526519)
 ([Computer Science and Engineering](https://corsi.unibo.it/2cycle/ComputerScienceEngineering)).
 
