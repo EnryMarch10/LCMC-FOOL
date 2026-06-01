@@ -1,1 +1,1 @@
-rootProject.name = "LCMC-Compiler"
+rootProject.name = "LCMC-FOOL"
